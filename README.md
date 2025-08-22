@@ -88,6 +88,9 @@ PRIVATE_KEY=your_private_key
 
 # Etherscan API Key for contract verification
 ETHERSCAN_MAINNET_API_KEY=your_etherscan_api_key
+
+# BSCScan API Key for BNB Chain contract verification
+BSCSCAN_API_KEY=your_bscscan_api_key
 ```
 
 ### WalletConnect Project ID
@@ -116,7 +119,7 @@ ETHERSCAN_MAINNET_API_KEY=your_etherscan_api_key
 ## 🌐 Networks
 
 - **Localhost**: `http://127.0.0.1:8545` (for development)
-- **Sepolia**: Ethereum testnet (for testing)
+- **BNB Chain Testnet**: BNB Smart Chain testnet (for testing)
 - **Mainnet**: Ethereum mainnet (for production)
 
 ## 🚀 Deployment

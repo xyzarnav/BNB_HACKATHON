@@ -282,3 +282,4 @@ const BidPage: React.FC = () => {
 };
 
 export default BidPage;
+
