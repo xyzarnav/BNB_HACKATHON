@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
 import { deployedContracts } from "../contracts/deployedContracts";
 import { toast } from "react-hot-toast";
+import { useRetryableTransaction } from "../hooks/useRetryableTransaction";
+import BidderStatusCard from "../components/BidderStatusCard";
 
 interface Project {
   id: string;
@@ -19,26 +21,39 @@ interface Project {
 const BidPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
-  const { address, isConnected } = useAccount();
+  const { isConnected } = useAccount();
   const { writeContract, isPending } = useWriteContract();
+  const { executeWithRetry, isRetrying } = useRetryableTransaction();
 
   const [project, setProject] = useState<Project | null>(null);
   const [bidAmount, setBidAmount] = useState("");
   const [proposal, setProposal] = useState("");
   const [loading, setLoading] = useState(true);
+  const [hasBidderProfile, setHasBidderProfile] = useState(false);
 
   // Read project details from blockchain
   const { data: projectData } = useReadContract({
     address: deployedContracts.TrustChain.address as `0x${string}`,
     abi: deployedContracts.TrustChain.abi,
-    functionName: 'getProject',
-    args: [projectId],
+    functionName: 'getProjectById',
+    args: [projectId ? BigInt(projectId) : BigInt(0)],
   });
 
   useEffect(() => {
     if (projectData) {
-      // Parse project data from blockchain
-      const [id, title, description, budget, deadline, category, requirements, status, bidCount] = projectData as any[];
+      // Parse project data from blockchain - getProjectById returns:
+      // [title, budget, description, deadline, posted, Id, projectType, creator, timePeriod]
+      const [title, budget, description, deadline, posted, id, projectType] = projectData as [
+        string, 
+        bigint, 
+        string, 
+        bigint, 
+        boolean, 
+        bigint, 
+        number, 
+        string, 
+        bigint
+      ];
       
       setProject({
         id: id.toString(),
@@ -46,15 +61,16 @@ const BidPage: React.FC = () => {
         description,
         budget: (Number(budget) / 10 ** 18).toFixed(2), // Convert from wei to BNB
         deadline: new Date(Number(deadline) * 1000).toLocaleDateString(),
-        category,
-        requirements,
-        status: status === 0 ? "Open" : status === 1 ? "In Progress" : "Completed",
-        bidCount: Number(bidCount),
+        category: projectType === 0 ? "Max Rate" : projectType === 1 ? "Fix Rate" : "Min Rate",
+        requirements: "", // This field is not returned by getProjectById
+        status: posted ? "Open" : "Closed",
+        bidCount: 0, // This field is not returned by getProjectById, we'll need to get it separately
       });
       setLoading(false);
     }
   }, [projectData]);
 
+  // Enhanced error handling and retry logic with better gas management
   const handleSubmitBid = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -63,31 +79,113 @@ const BidPage: React.FC = () => {
       return;
     }
 
+    // Check if user needs to create bidder profile first
+    if (needsBidderProfile) {
+      toast.error("Please create your bidder profile first");
+      return;
+    }
+
     if (!bidAmount || !proposal) {
       toast.error("Please fill in all required fields");
       return;
     }
 
+    // Validate bid amount
+    const bidValue = parseFloat(bidAmount);
+    if (bidValue <= 0) {
+      toast.error("Bid amount must be greater than 0");
+      return;
+    }
+
     try {
-      // Convert bid amount to wei
-      const bidAmountInWei = (parseFloat(bidAmount) * 10 ** 18).toString();
+      // Convert bid amount to wei with proper precision
+      const bidAmountInWei = BigInt(Math.floor(bidValue * 10 ** 18));
 
-      writeContract({
-        address: deployedContracts.TrustChain.address as `0x${string}`,
-        abi: deployedContracts.TrustChain.abi,
-        functionName: 'submitBid',
-        args: [
-          projectId,
-          bidAmountInWei,
-          proposal
-        ],
-      });
+      toast.loading("Preparing transaction...", { id: "bid-transaction" });
 
-      toast.success("Bid submitted successfully!");
-      navigate("/dashboard");
-    } catch (error) {
+      // Use retry mechanism for transaction submission
+      await executeWithRetry(
+        () => writeContract({
+          address: deployedContracts.TrustChain.address as `0x${string}`,
+          abi: deployedContracts.TrustChain.abi,
+          functionName: 'createBid',
+          args: [
+            BigInt(projectId || "0"),
+            proposal,
+            bidAmountInWei
+          ],
+        }),
+        () => {
+          // Success callback
+          toast.success("Bid submitted successfully!", { id: "bid-transaction" });
+          setTimeout(() => {
+            navigate("/dashboard");
+          }, 1500);
+        },
+        (error, attempt) => {
+          // Error callback - return true to retry, false to stop
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          
+          // Don't retry on user rejection or contract reverts
+          if (
+            errorMessage.includes("user rejected") || 
+            errorMessage.includes("User denied") ||
+            errorMessage.includes("execution reverted")
+          ) {
+            return false; // Don't retry
+          }
+          
+          // Retry on gas issues, dropped transactions, or nonce issues
+          if (
+            errorMessage.includes("dropped") ||
+            errorMessage.includes("replaced") ||
+            errorMessage.includes("nonce") ||
+            errorMessage.includes("gas")
+          ) {
+            return true; // Retry
+          }
+          
+          return attempt < 2; // Retry once for other errors
+        }
+      );
+      
+    } catch (error: unknown) {
       console.error("Error submitting bid:", error);
-      toast.error("Failed to submit bid. Please try again.");
+      toast.dismiss("bid-transaction");
+      
+      // Enhanced error handling with more specific messages
+      const errorMessage = error instanceof Error ? error.message : 
+                          (typeof error === 'string' ? error : 
+                           (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' ? error.message : 
+                            "Unknown error occurred"));
+      
+      if (errorMessage.includes("user rejected") || errorMessage.includes("User denied")) {
+        toast.error("Transaction cancelled by user.");
+      } else if (errorMessage.includes("insufficient funds")) {
+        toast.error("Insufficient funds for gas fees. Please add more BNB to your wallet.");
+      } else if (errorMessage.includes("dropped") || errorMessage.includes("replaced")) {
+        toast.error("Transaction was dropped due to network congestion. All retries failed.");
+      } else if (errorMessage.includes("nonce")) {
+        toast.error("Transaction nonce issue. Please refresh the page and try again.");
+      } else if (errorMessage.includes("gas")) {
+        toast.error("Gas estimation failed repeatedly. Please try again later.");
+      } else if (errorMessage.includes("execution reverted")) {
+        // Check for common contract revert reasons
+        if (errorMessage.includes("Already bidded") || errorMessage.includes("already bid")) {
+          toast.error("You have already submitted a bid for this project.");
+        } else if (errorMessage.includes("Project not active")) {
+          toast.error("This project is no longer accepting bids.");
+        } else if (errorMessage.includes("Bidder does not exist")) {
+          toast.error("Please create your bidder profile first.");
+          setNeedsBidderProfile(true);
+        } else {
+          toast.error("Transaction failed. Please check the project details and try again.");
+        }
+      } else if (errorMessage.includes("network")) {
+        toast.error("Network error. Please check your connection and try again.");
+      } else {
+        toast.error("Failed to submit bid after multiple attempts. Please try again later.");
+      }
     }
   };
 
@@ -225,6 +323,44 @@ const BidPage: React.FC = () => {
               {/* Bid Form */}
               <div className="card p-6">
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Submit Your Bid</h2>
+                
+                {/* Bidder Profile Status */}
+                {needsBidderProfile && (
+                  <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0">
+                        <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-medium text-yellow-800">
+                          Bidder Profile Required
+                        </h3>
+                        <div className="mt-2 text-sm text-yellow-700">
+                          <p>You need to create a bidder profile before submitting bids.</p>
+                        </div>
+                        <div className="mt-4">
+                          <button
+                            onClick={createBidderProfile}
+                            disabled={isPending || isRetrying}
+                            className="btn btn-secondary text-sm"
+                          >
+                            {isPending || isRetrying ? (
+                              <div className="flex items-center">
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                                Creating Profile...
+                              </div>
+                            ) : (
+                              "Create Bidder Profile"
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
                 <form onSubmit={handleSubmitBid} className="space-y-6">
                   <div>
                     <label htmlFor="bidAmount" className="block text-sm font-medium text-gray-700 mb-2">
@@ -264,10 +400,29 @@ const BidPage: React.FC = () => {
                   <div className="pt-4">
                     <button
                       type="submit"
-                      disabled={isPending}
-                      className="w-full btn btn-primary"
+                      disabled={isPending || isRetrying || needsBidderProfile}
+                      className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
-                      {isPending ? "Submitting Bid..." : "Submit Bid"}
+                      {isPending || isRetrying ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          {isRetrying ? "Retrying..." : "Submitting Bid..."}
+                        </div>
+                      ) : needsBidderProfile ? (
+                        <div className="flex items-center justify-center">
+                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                          </svg>
+                          Create Bidder Profile First
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                          </svg>
+                          Submit Bid
+                        </div>
+                      )}
                     </button>
                   </div>
                 </form>

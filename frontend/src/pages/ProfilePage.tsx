@@ -1,5 +1,6 @@
 import React from 'react';
 import UserInfo from '../components/Trustchaincomponents/PageComponents/UserInfo';
+import BidderStatusCard from '../components/BidderStatusCard';
 import { useAccount } from 'wagmi';
 
 const ProfilePage: React.FC = () => {
@@ -24,6 +25,12 @@ const ProfilePage: React.FC = () => {
     <div className="bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Your Profile</h1>
+        
+        {/* Bidder Status Section */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <BidderStatusCard />
+        </div>
+        
         <UserInfo />
       </div>
     </div>
