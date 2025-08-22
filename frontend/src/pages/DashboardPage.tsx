@@ -25,10 +25,7 @@ interface DashboardStats {
 }
 
 const DashboardPage: React.FC = () => {
-  // Get tab from URL query parameter
-  const urlParams = new URLSearchParams(window.location.search);
-  const initialTab = urlParams.get('tab') || 'overview';
-  const activeTab = initialTab;
+  const [activeTab, setActiveTab] = useState("overview");
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 0,
     totalBids: 0,
@@ -190,8 +187,8 @@ const DashboardPage: React.FC = () => {
 
         {/* Tab Navigation */}
         <div className="flex space-x-1 mb-6">
-          <Link
-            to="/dashboard"
+          <button
+            onClick={() => setActiveTab("overview")}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "overview"
                 ? "bg-blue-600 text-white shadow-md"
@@ -199,9 +196,9 @@ const DashboardPage: React.FC = () => {
             }`}
           >
             Overview
-          </Link>
-          <Link
-            to="/dashboard?tab=projects"
+          </button>
+          <button
+            onClick={() => setActiveTab("projects")}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "projects"
                 ? "bg-blue-600 text-white shadow-md"
@@ -209,9 +206,9 @@ const DashboardPage: React.FC = () => {
             }`}
           >
             My Projects
-          </Link>
-          <Link
-            to="/dashboard?tab=bids"
+          </button>
+          <button
+            onClick={() => setActiveTab("bids")}
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "bids"
                 ? "bg-blue-600 text-white shadow-md"
@@ -219,7 +216,7 @@ const DashboardPage: React.FC = () => {
             }`}
           >
             My Bids
-          </Link>
+          </button>
         </div>
 
         {/* Tab Content */}
