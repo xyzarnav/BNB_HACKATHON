@@ -16,6 +16,7 @@ const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr2
 const deployerPrivateKey = process.env.PRIVATE_KEY ?? "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
 // If not set, it uses our block explorers default API keys.
 const etherscanApiKey = process.env.ETHERSCAN_MAINNET_API_KEY || "";
+const bscscanApiKey = process.env.BSCSCAN_API_KEY || "";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -31,7 +32,7 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  defaultNetwork: "sepolia",
+  defaultNetwork: "bscTestnet",
   namedAccounts: {
     deployer: {
       default: 0,
@@ -44,88 +45,33 @@ const config: HardhatUserConfig = {
         enabled: process.env.MAINNET_FORKING_ENABLED === "true",
       },
     },
+    bscTestnet: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      chainId: 97,
+      accounts: [deployerPrivateKey],
+      verify: {
+        etherscan: {
+          apiUrl: "https://api-testnet.bscscan.com",
+          apiKey: bscscanApiKey,
+        },
+      },
+    },
     localhost: {
       url: "http://127.0.0.1:8545",
     },
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
       accounts: [deployerPrivateKey],
-    },
-    sepolia: {
-      url: `https://eth-sepolia.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    arbitrum: {
-      url: `https://arb-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    arbitrumSepolia: {
-      url: `https://arb-sepolia.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    optimism: {
-      url: `https://opt-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    optimismSepolia: {
-      url: `https://opt-sepolia.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygon: {
-      url: `https://polygon-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonAmoy: {
-      url: `https://polygon-amoy.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonZkEvm: {
-      url: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonZkEvmCardona: {
-      url: `https://polygonzkevm-cardona.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    gnosis: {
-      url: "https://rpc.gnosischain.com",
-      accounts: [deployerPrivateKey],
-    },
-    chiado: {
-      url: "https://rpc.chiadochain.net",
-      accounts: [deployerPrivateKey],
-    },
-    base: {
-      url: "https://mainnet.base.org",
-      accounts: [deployerPrivateKey],
-    },
-    baseSepolia: {
-      url: "https://sepolia.base.org",
-      accounts: [deployerPrivateKey],
-    },
-    scrollSepolia: {
-      url: "https://sepolia-rpc.scroll.io",
-      accounts: [deployerPrivateKey],
-    },
-    scroll: {
-      url: "https://rpc.scroll.io",
-      accounts: [deployerPrivateKey],
-    },
-    celo: {
-      url: "https://forno.celo.org",
-      accounts: [deployerPrivateKey],
-    },
-    celoAlfajores: {
-      url: "https://alfajores-forno.celo-testnet.org",
-      accounts: [deployerPrivateKey],
-    },
+    }
   },
   etherscan: {
-    apiKey: etherscanApiKey,
+    apiKey: {
+      bscTestnet: bscscanApiKey,
+    },
   },
   verify: {
     etherscan: {
-      apiKey: etherscanApiKey,
+      apiKey: bscscanApiKey,
     },
   },
   sourcify: {
