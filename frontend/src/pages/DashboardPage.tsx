@@ -25,7 +25,10 @@ interface DashboardStats {
 }
 
 const DashboardPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  // Get tab from URL query parameter
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialTab = urlParams.get('tab') || 'overview';
+  const activeTab = initialTab;
   const [stats, setStats] = useState<DashboardStats>({
     totalProjects: 0,
     totalBids: 0,
@@ -187,8 +190,8 @@ const DashboardPage: React.FC = () => {
 
         {/* Tab Navigation */}
         <div className="flex space-x-1 mb-6">
-          <button
-            onClick={() => setActiveTab("overview")}
+          <Link
+            to="/dashboard"
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "overview"
                 ? "bg-blue-600 text-white shadow-md"
@@ -196,9 +199,9 @@ const DashboardPage: React.FC = () => {
             }`}
           >
             Overview
-          </button>
-          <button
-            onClick={() => setActiveTab("projects")}
+          </Link>
+          <Link
+            to="/dashboard?tab=projects"
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "projects"
                 ? "bg-blue-600 text-white shadow-md"
@@ -206,9 +209,9 @@ const DashboardPage: React.FC = () => {
             }`}
           >
             My Projects
-          </button>
-          <button
-            onClick={() => setActiveTab("bids")}
+          </Link>
+          <Link
+            to="/dashboard?tab=bids"
             className={`px-4 py-2 rounded-lg transition-colors ${
               activeTab === "bids"
                 ? "bg-blue-600 text-white shadow-md"
@@ -216,7 +219,7 @@ const DashboardPage: React.FC = () => {
             }`}
           >
             My Bids
-          </button>
+          </Link>
         </div>
 
         {/* Tab Content */}
@@ -282,7 +285,25 @@ const DashboardPage: React.FC = () => {
                       />
                     </div>
                   </div>
-                  <div className="flex justify-between items-center text-sm text-gray-500">
+                  <div className="mt-4 flex justify-between items-center">
+                    <div className="flex space-x-4">
+                      <Link
+                        to={`/project/${Number(project.projectId)}`}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+                      >
+                        View Details
+                      </Link>
+                      <a
+                        href={generateProjectExplorerUrl(project.projectId)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors text-sm font-medium"
+                      >
+                        View on Explorer
+                      </a>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex justify-between items-center text-sm text-gray-500">
                     <div className="flex space-x-4">
                       <span>Deadline: {formatTimestamp(project.deadline)}</span>
                       <span>Project ID: {project.projectId}</span>

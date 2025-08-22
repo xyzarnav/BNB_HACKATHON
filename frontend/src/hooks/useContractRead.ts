@@ -105,8 +105,36 @@ export const useProjectById = (projectId: number) => {
   return useReadContract({
     address: deployedContracts.TrustChain.address as `0x${string}`,
     abi: deployedContracts.TrustChain.abi,
-    functionName: 'getProjectById' as any,
+    functionName: 'getProjectById',
     args: [BigInt(projectId)],
+    query: {
+      enabled: projectId > 0,
+      select: (data: any) => {
+        if (!data) return null;
+        const [
+          title,
+          budget,
+          description,
+          deadline,
+          posted,
+          id,
+          projectType,
+          creator,
+          timePeriod
+        ] = data;
+        return {
+          title,
+          budget: BigInt(budget),
+          description,
+          deadline: BigInt(deadline),
+          posted,
+          id: BigInt(id),
+          projectType: Number(projectType),
+          creator,
+          timePeriod: BigInt(timePeriod)
+        };
+      }
+    }
   });
 };
 

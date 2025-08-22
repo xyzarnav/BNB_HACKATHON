@@ -273,7 +273,7 @@ const Dashboard: React.FC = () => {
                           )}
                         </div>
                       </div>
-                      <div className="flex flex-col items-end">
+                      <div className="flex flex-col items-end space-y-2">
                         <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                           project.posted
                             ? 'bg-green-100 text-green-800' 
@@ -281,12 +281,26 @@ const Dashboard: React.FC = () => {
                         }`}>
                           {project.posted ? 'Active' : 'Draft'}
                         </span>
+                        <Link
+                          to={`/project/${Number(project.projectId)}`}
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          View Details →
+                        </Link>
                         <button
                           onClick={() => toggleQR(project.projectId)}
-                          className="text-blue-600 hover:text-blue-700 text-sm mt-4"
+                          className="text-blue-600 hover:text-blue-700 text-sm"
                         >
                           {project.showQR ? 'Hide QR' : 'Show QR'}
                         </button>
+                        <a 
+                          href={getBSCScanUrl(project.projectId)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          View on Explorer
+                        </a>
                       </div>
                     </div>
 
@@ -308,19 +322,13 @@ const Dashboard: React.FC = () => {
                     )}
 
                     {/* Action Buttons */}
-                    <div className="mt-6 flex space-x-4">
-                      <Link
-                        to="/active-projects"
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                      >
-                        View Active Projects →
-                      </Link>
+                    <div className="mt-6 pt-4 border-t border-gray-200 flex space-x-4">
                       {project.posted && address && address.toLowerCase() !== project.creator.toLowerCase() && (
                         <Link
-                          to={`/bid/${project.projectId}`}
-                          className="text-green-600 hover:text-green-700 text-sm font-medium"
+                          to={`/bid/${Number(project.projectId)}`}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                         >
-                          Submit Bid →
+                          Submit Bid
                         </Link>
                       )}
                     </div>

@@ -155,36 +155,71 @@ const ActiveProjects: React.FC = () => {
                 {filteredProjects.map((project) => (
                   <div key={project.projectId} className="border border-gray-200 rounded-lg p-6">
                     <div className="flex justify-between items-start">
-                      <div>
+                      <div className="flex-1">
                         <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
                         <p className="text-gray-600 mb-4">{project.description}</p>
+                        
+                        {/* Project Stats Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <p className="text-2xl font-bold text-blue-600">{project.formattedBudget}</p>
+                            <p className="text-sm text-gray-500">Budget</p>
+                          </div>
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <p className="text-lg font-semibold text-green-600">
+                              <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                                Active
+                              </span>
+                            </p>
+                            <p className="text-sm text-gray-500 mt-1">Status</p>
+                          </div>
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <p className="text-lg font-semibold">#{Number(project.projectId)}</p>
+                            <p className="text-sm text-gray-500">Project ID</p>
+                          </div>
+                          <div className="bg-gray-50 p-3 rounded-lg">
+                            <p className="text-lg font-semibold">{project.formattedDeadline}</p>
+                            <p className="text-sm text-gray-500">Deadline</p>
+                          </div>
+                        </div>
+
+                        {/* Additional Info */}
                         <div className="space-y-2">
-                          <p className="text-sm text-gray-500">
-                            Creator: {formatAddress(project.creator)}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Budget: {project.formattedBudget}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Deadline: {project.formattedDeadline}
+                          <p className="text-sm text-gray-500 flex items-center">
+                            <span className="font-medium mr-2">Creator:</span>
+                            {formatAddress(project.creator)}
                           </p>
                           {project.hasAuditor && (
-                            <p className="text-sm text-gray-500">
-                              Auditor: {formatAddress(project.auditor)}
+                            <p className="text-sm text-gray-500 flex items-center">
+                              <span className="font-medium mr-2">Auditor:</span>
+                              {formatAddress(project.auditor)}
                             </p>
                           )}
                         </div>
                       </div>
-                      <div className="flex flex-col items-end">
-                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
-                          Active
-                        </span>
+
+                      {/* Right Side Actions */}
+                      <div className="flex flex-col items-end ml-4 space-y-2">
+                        <Link
+                          to={`/project/${Number(project.projectId)}`}
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          View Details →
+                        </Link>
                         <button
                           onClick={() => toggleQR(project.projectId)}
-                          className="text-blue-600 hover:text-blue-700 text-sm mt-4"
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
                         >
-                          {project.showQR ? 'Hide QR' : 'Show QR'}
+                          {project.showQR ? 'Hide QR' : 'Show QR Code'}
                         </button>
+                        <a 
+                          href={getBSCScanUrl(project.projectId)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                        >
+                          View on Explorer
+                        </a>
                       </div>
                     </div>
 
@@ -198,7 +233,7 @@ const ActiveProjects: React.FC = () => {
                               size={160} 
                             />
                             <p className="text-xs text-gray-500 mt-2 text-center">
-                              View on BSCScan
+                              Scan to view on BSCScan
                             </p>
                           </div>
                         </div>
@@ -206,19 +241,13 @@ const ActiveProjects: React.FC = () => {
                     )}
 
                     {/* Action Buttons */}
-                    <div className="mt-6 flex space-x-4">
-                      <Link
-                        to={`/project/${project.projectId}`}
-                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                      >
-                        View Details →
-                      </Link>
+                    <div className="mt-6 pt-4 border-t border-gray-200 flex space-x-4">
                       {address && address.toLowerCase() !== project.creator.toLowerCase() && (
                         <Link
-                          to={`/bid/${project.projectId}`}
-                          className="text-green-600 hover:text-green-700 text-sm font-medium"
+                          to={`/bid/${Number(project.projectId)}`}
+                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm font-medium"
                         >
-                          Submit Bid →
+                          Submit Bid
                         </Link>
                       )}
                     </div>

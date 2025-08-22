@@ -35,7 +35,7 @@ const UserInfo: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Your Projects Card */}
         <Link
-          to="/profile/projects"
+          to="/dashboard?tab=projects"
           className="group relative bg-white rounded-xl p-8 border border-gray-200 hover:border-blue-200 transition-all duration-300 hover:shadow-lg hover:transform hover:scale-[1.02]"
         >
           <div className="absolute top-0 right-0 p-4">
@@ -65,7 +65,7 @@ const UserInfo: React.FC = () => {
 
         {/* Your Bids Card */}
         <Link
-          to="/profile/bids"
+          to="/dashboard?tab=bids"
           className="group relative bg-white rounded-xl p-8 border border-gray-200 hover:border-blue-200 transition-all duration-300 hover:shadow-lg hover:transform hover:scale-[1.02]"
         >
           <div className="absolute top-0 right-0 p-4">
