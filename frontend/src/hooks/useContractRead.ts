@@ -141,25 +141,57 @@ export const useProjectById = (projectId: number) => {
   });
 };
 
-// Fixed: Use the bids mapping and filter by user address
+// Fixed: Use the getBidsByUser function from the contract
 export const useUserBids = (userAddress: Address) => {
-  const { data: bidCountData } = useBidCount();
-  
-  // Create an array of bid IDs to check
-  const bidIds = Array.from({ length: Number(bidCountData || 0) }, (_, i) => i + 1);
-  
-  // For now, return empty array since we can't efficiently get user bids without a getter function
-  // TODO: Add getBidsByUser function to the contract
-  return { data: [], isLoading: false, error: null };
+  return useReadContract({
+    address: deployedContracts.TrustChain.address as `0x${string}`,
+    abi: deployedContracts.TrustChain.abi,
+    functionName: 'getBidsByUser',
+    args: [userAddress],
+    query: {
+      enabled: !!userAddress,
+      select: (data: any) => {
+        if (!Array.isArray(data)) {
+          console.error('Expected array but got:', typeof data);
+          return [];
+        }
+        return data.map((bid: any) => ({
+          bidId: Number(bid.bidId),
+          projectId: Number(bid.projectId),
+          bidder: bid.bidder,
+          amount: BigInt(bid.amount),
+          proposalIPFHash: bid.proposalIPFHash,
+          accepted: bid.accepted
+        }));
+      }
+    }
+  });
 };
 
-// Fixed: Use the projects mapping and filter by creator
+// Fixed: Use the getProjectsByCreator function from the contract
 export const useProjectsByCreator = (creatorAddress: Address) => {
-  const { data: projectCountData } = useProjectCount();
-  
-  // For now, return empty array since we can't efficiently get creator projects without a getter function
-  // TODO: Add getProjectsByCreator function to the contract
-  return { data: [], isLoading: false, error: null };
+  return useReadContract({
+    address: deployedContracts.TrustChain.address as `0x${string}`,
+    abi: deployedContracts.TrustChain.abi,
+    functionName: 'getProjectsByCreator',
+    args: [creatorAddress],
+    query: {
+      enabled: !!creatorAddress,
+      select: (data: unknown) => {
+        if (!Array.isArray(data)) {
+          console.error('Expected array but got:', typeof data);
+          return [];
+        }
+        return data.map((project: unknown) => ({
+          ...(project as Project),
+          projectId: BigInt((project as Project).projectId || 0),
+          budget: BigInt((project as Project).budget || 0),
+          deadline: BigInt((project as Project).deadline || 0),
+          timePeriod: BigInt((project as Project).timePeriod || 0)
+        }));
+      }
+    }
+  });
 };
 
 // Fixed: Use the bondWinners mapping instead of non-existent getProjectBidWinner

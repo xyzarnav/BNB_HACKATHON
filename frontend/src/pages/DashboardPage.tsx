@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAccount } from "wagmi";
 import { useAuth } from "../hooks/useAuth";
+import { useProjectsByCreator, useUserBids, useAllProjects } from "../hooks/useContractRead";
 
 interface DashboardStats {
   totalProjects: number;
@@ -12,55 +13,28 @@ interface DashboardStats {
 
 const DashboardPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState("overview");
-  const [stats, setStats] = useState<DashboardStats>({
-    totalProjects: 0,
-    totalBids: 0,
-    userProjects: 0,
-    userBids: 0,
-  });
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const { address, isConnected } = useAccount();
   const { user } = useAuth();
+
+  // Fetch data using the hooks
+  const { data: allProjects } = useAllProjects();
+  const { data: userProjects } = useProjectsByCreator(address as `0x${string}`);
+  const { data: userBids } = useUserBids(address as `0x${string}`);
+
+  // Calculate stats
+  const stats: DashboardStats = {
+    totalProjects: Array.isArray(allProjects) ? allProjects.length : 0,
+    totalBids: 0, // TODO: Calculate total bids across all projects
+    userProjects: Array.isArray(userProjects) ? userProjects.length : 0,
+    userBids: Array.isArray(userBids) ? userBids.length : 0,
+  };
 
   // Format address
   const formatAddress = (address: string): string => {
     if (!address) return "";
     return `${address.slice(0, 6)}...${address.slice(-4)}`;
   };
-
-  // Load dashboard data
-  useEffect(() => {
-    const loadDashboardData = async () => {
-      if (!isConnected || !address) {
-        setLoading(false);
-        return;
-      }
-
-      try {
-        setLoading(true);
-        setError(null);
-
-        // For now, use dummy data until blockchain integration is working
-        const newStats: DashboardStats = {
-          totalProjects: 0,
-          totalBids: 0,
-          userProjects: 0,
-          userBids: 0,
-        };
-        setStats(newStats);
-
-        setLoading(false);
-      } catch (err) {
-        console.error("Error loading dashboard data:", err);
-        setError("Failed to load dashboard data");
-        setLoading(false);
-      }
-    };
-
-    loadDashboardData();
-  }, [isConnected, address]);
 
   if (!isConnected) {
     return (
@@ -78,20 +52,6 @@ const DashboardPage: React.FC = () => {
     );
   }
 
-  if (loading) {
-    return (
-      <div className="bg-gray-50 py-12">
-        <div className="container mx-auto px-4">
-          <div className="max-w-md mx-auto text-center bg-white rounded-lg shadow-md p-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-900">Loading dashboard...</p>
-            <p className="text-sm text-gray-600 mt-2">Fetching data from blockchain...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-gray-50 py-8">
       <div className="container mx-auto px-4">
@@ -101,12 +61,6 @@ const DashboardPage: React.FC = () => {
             Connected: {formatAddress(address || "")}
           </div>
         </div>
-
-        {error && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-            <p className="text-red-700">Error: {error}</p>
-          </div>
-        )}
 
         {/* Stats Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -258,23 +212,58 @@ const DashboardPage: React.FC = () => {
 
         {activeTab === "projects" && (
           <div className="space-y-4">
-            <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm text-center">
-              <p className="text-gray-600">No projects created yet</p>
-              <Link to="/create-project" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
-                Create Your First Project →
-              </Link>
-            </div>
+            {userProjects && userProjects.length > 0 ? (
+              userProjects.map((project, index) => (
+                <div key={index} className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{project.title}</h3>
+                  <p className="text-gray-600 mb-3">{project.description}</p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-500">Budget: {project.budget.toString()} BNB</span>
+                    <span className="text-sm text-gray-500">Status: {project.posted ? 'Active' : 'Inactive'}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm text-center">
+                <p className="text-gray-600">No projects created yet</p>
+                <Link to="/create-project" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+                  Create Your First Project →
+                </Link>
+              </div>
+            )}
           </div>
         )}
 
         {activeTab === "bids" && (
           <div className="space-y-4">
-            <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm text-center">
-              <p className="text-gray-600">No bids submitted yet</p>
-              <Link to="/active-projects" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
-                Browse Active Projects →
-              </Link>
-            </div>
+            {userBids && userBids.length > 0 ? (
+              userBids.map((bid, index) => (
+                <div key={index} className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Bid on Project #{bid.projectId}</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <p className="text-sm text-gray-500">Bid Amount</p>
+                      <p className="text-lg font-medium text-blue-600">{bid.amount.toString()} BNB</p>
+                    </div>
+                    <div>
+                      <p className="text-sm text-gray-500">Status</p>
+                      <p className="text-lg font-medium text-green-600">{bid.accepted ? 'Accepted' : 'Pending'}</p>
+                    </div>
+                  </div>
+                  <div className="mt-3">
+                    <p className="text-sm text-gray-500">IPFS Hash</p>
+                    <p className="text-gray-700">{bid.proposalIPFHash}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm text-center">
+                <p className="text-gray-600">No bids submitted yet</p>
+                <Link to="/active-projects" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+                  Browse Active Projects →
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>
