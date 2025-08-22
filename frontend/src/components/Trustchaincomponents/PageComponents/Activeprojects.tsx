@@ -1,228 +1,252 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useAccount } from "wagmi";
+import {
+  useActiveProjects as useActiveProjectsHook,
+  type Project as BlockchainProject,
+} from "../../../hooks/useContractRead";
+import { QRCodeSVG } from "qrcode.react";
+import { deployedContracts } from "../../../contracts/deployedContracts";
 
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  budget: string;
-  status: string;
-  deadline: string;
-  bids: number;
-  creator: string;
-  category: string;
+interface ActiveProject extends BlockchainProject {
+  showQR: boolean;
+  formattedBudget: string;
+  formattedDeadline: string;
 }
 
-const Activeprojects: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+const formatBigIntToBNB = (value: bigint): string => {
+  return (Number(value) / 10 ** 18).toFixed(2) + " BNB";
+};
+
+const formatTimestamp = (value: bigint): string => {
+  return new Date(Number(value) * 1000).toLocaleDateString();
+};
+
+const formatAddress = (address: string): string => {
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
+
+const getBSCScanUrl = (projectId: number): string => {
+  const network = import.meta.env.VITE_NETWORK || 'testnet';
+  const baseUrl = network === 'mainnet' 
+    ? 'https://bscscan.com'
+    : 'https://testnet.bscscan.com';
+  return `${baseUrl}/address/${deployedContracts.TrustChain.address}?a=${projectId}`;
+};
+
+const ActiveProjects: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState("all");
+  const [error, setError] = useState<string | null>(null);
+  const [projects, setProjects] = useState<ActiveProject[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<ActiveProject[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { address } = useAccount();
 
+  // Read active projects from blockchain
+  const { data: activeProjects, isLoading: isProjectsLoading, error: projectsError } = useActiveProjectsHook();
+
+  // Process projects data
   useEffect(() => {
-    // Mock data - in real app this would come from smart contract
-    const mockProjects: Project[] = [
-      {
-        id: 1,
-        title: "Road Infrastructure Development",
-        description: "Construction of major highway connecting two cities with modern infrastructure",
-        budget: "2,500,000 BNB",
-        status: "Active",
-        deadline: "2024-12-31",
-        bids: 5,
-        creator: "0x1234...5678",
-        category: "Infrastructure",
-      },
-      {
-        id: 2,
-        title: "Smart City Implementation",
-        description: "IoT infrastructure for smart city management and monitoring",
-        budget: "1,800,000 BNB",
-        status: "Bidding",
-        deadline: "2024-11-15",
-        bids: 3,
-        creator: "0x8765...4321",
-        category: "Technology",
-      },
-      {
-        id: 3,
-        title: "Healthcare Facility Upgrade",
-        description: "Modernization of public hospital facilities and equipment",
-        budget: "3,200,000 BNB",
-        status: "Active",
-        deadline: "2024-10-30",
-        bids: 7,
-        creator: "0x9876...5432",
-        category: "Healthcare",
-      },
-      {
-        id: 4,
-        title: "Educational Institution Renovation",
-        description: "Complete renovation of public school buildings and facilities",
-        budget: "1,500,000 BNB",
-        status: "Bidding",
-        deadline: "2024-12-15",
-        bids: 4,
-        creator: "0x5432...1098",
-        category: "Education",
-      },
-    ];
-
-    setTimeout(() => {
-      setProjects(mockProjects);
+    if (projectsError) {
+      console.error('Error loading projects:', projectsError);
+      setError('Failed to load projects from blockchain');
       setLoading(false);
-    }, 1000);
-  }, []);
-
-  const filteredProjects = projects.filter(project => {
-    if (filter === "all") return true;
-    return project.status.toLowerCase() === filter.toLowerCase();
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "active":
-        return "bg-green-100 text-green-800";
-      case "bidding":
-        return "bg-yellow-100 text-yellow-800";
-      case "completed":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+      return;
     }
+
+    if (!isProjectsLoading && activeProjects) {
+      try {
+        console.log('Processing projects:', activeProjects);
+        const processedProjects: ActiveProject[] = activeProjects.map(project => ({
+          ...project,
+          showQR: false,
+          formattedBudget: formatBigIntToBNB(project.budget),
+          formattedDeadline: formatTimestamp(project.deadline),
+        }));
+        setProjects(processedProjects);
+        setFilteredProjects(processedProjects);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error processing projects:', err);
+        setError('Error processing blockchain data');
+        setLoading(false);
+      }
+    }
+  }, [activeProjects, projectsError, isProjectsLoading]);
+
+  // Filter projects based on search
+  useEffect(() => {
+    let filtered = [...projects];
+
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      filtered = filtered.filter(project => 
+        project.title.toLowerCase().includes(term) ||
+        project.description.toLowerCase().includes(term) ||
+        project.creator.toLowerCase().includes(term)
+      );
+    }
+
+    setFilteredProjects(filtered);
+  }, [searchTerm, projects]);
+
+  // Toggle QR code visibility
+  const toggleQR = (projectId: number) => {
+    setFilteredProjects(projects.map(p => 
+      p.projectId === projectId ? { ...p, showQR: !p.showQR } : p
+    ));
   };
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading projects...</p>
+          <p className="mt-4 text-gray-600">Loading active projects...</p>
+          <p className="text-sm text-gray-500 mt-2">Fetching data from blockchain...</p>
+          {error && (
+            <p className="text-sm text-red-500 mt-2">Error: {error}</p>
+          )}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Active Projects</h1>
-          <p className="text-gray-600">Browse and bid on available government projects</p>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900">Active Projects</h1>
+          <Link 
+            to="/create-project" 
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Create New Project
+          </Link>
         </div>
 
-        {/* Filters */}
-        <div className="mb-6">
-          <div className="flex flex-wrap gap-2">
-            {["all", "active", "bidding", "completed"].map((filterOption) => (
-              <button
-                key={filterOption}
-                onClick={() => setFilter(filterOption)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  filter === filterOption
-                    ? "bg-blue-600 text-white"
-                    : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-200"
-                }`}
-              >
-                {filterOption.charAt(0).toUpperCase() + filterOption.slice(1)}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Projects Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProjects.map((project) => (
-            <div
-              key={project.id}
-              className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
-            >
-              <div className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {project.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                      {project.description}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Budget:</span>
-                    <span className="text-sm font-medium text-gray-900">
-                      {project.budget}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Category:</span>
-                    <span className="text-sm font-medium text-gray-900">
-                      {project.category}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Bids:</span>
-                    <span className="text-sm font-medium text-gray-900">
-                      {project.bids} bids
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Deadline:</span>
-                    <span className="text-sm font-medium text-gray-900">
-                      {project.deadline}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-500">Status:</span>
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(project.status)}`}>
-                      {project.status}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-gray-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">
-                      Created by: {project.creator}
-                    </span>
-                    <Link
-                      to={`/project/${project.id}`}
-                      className="text-blue-600 hover:text-blue-700 text-sm font-medium"
-                    >
-                      View Details →
-                    </Link>
-                  </div>
-                </div>
-              </div>
-
-              <div className="px-6 py-3 bg-gray-50 border-t border-gray-200">
-                <button className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium">
-                  Submit Bid
-                </button>
-              </div>
+        {/* Search Section */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm p-6 mb-8">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex-1">
+              <input
+                type="text"
+                placeholder="Search active projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
             </div>
-          ))}
+          </div>
         </div>
 
-        {filteredProjects.length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">📋</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No projects found</h3>
-            <p className="text-gray-600">There are no projects matching your current filter.</p>
+        {/* Projects List */}
+        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
+          <div className="p-6">
+            {filteredProjects.length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-600">No active projects found</p>
+                <Link to="/create-project" className="text-blue-600 hover:text-blue-700 mt-4 inline-block">
+                  Create your first project →
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {filteredProjects.map((project) => (
+                  <div key={project.projectId} className="border border-gray-200 rounded-lg p-6">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
+                        <p className="text-gray-600 mb-4">{project.description}</p>
+                        <div className="space-y-2">
+                          <p className="text-sm text-gray-500">
+                            Creator: {formatAddress(project.creator)}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Budget: {project.formattedBudget}
+                          </p>
+                          <p className="text-sm text-gray-500">
+                            Deadline: {project.formattedDeadline}
+                          </p>
+                          {project.hasAuditor && (
+                            <p className="text-sm text-gray-500">
+                              Auditor: {formatAddress(project.auditor)}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                          Active
+                        </span>
+                        <button
+                          onClick={() => toggleQR(project.projectId)}
+                          className="text-blue-600 hover:text-blue-700 text-sm mt-4"
+                        >
+                          {project.showQR ? 'Hide QR' : 'Show QR'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* QR Code Section */}
+                    {project.showQR && (
+                      <div className="mt-6 border-t border-gray-200 pt-6">
+                        <div className="flex items-start space-x-6">
+                          <div className="bg-white p-4 rounded-lg shadow-sm">
+                            <QRCodeSVG 
+                              value={getBSCScanUrl(project.projectId)} 
+                              size={160} 
+                            />
+                            <p className="text-xs text-gray-500 mt-2 text-center">
+                              View on BSCScan
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Buttons */}
+                    <div className="mt-6 flex space-x-4">
+                      <Link
+                        to={`/project/${project.projectId}`}
+                        className="text-blue-600 hover:text-blue-700 text-sm font-medium"
+                      >
+                        View Details →
+                      </Link>
+                      {address && address.toLowerCase() !== project.creator.toLowerCase() && (
+                        <Link
+                          to={`/bid/${project.projectId}`}
+                          className="text-green-600 hover:text-green-700 text-sm font-medium"
+                        >
+                          Submit Bid →
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
-        )}
+        </div>
+
+        {/* Project Stats */}
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+            <h2 className="text-xl font-semibold mb-2">Active Projects</h2>
+            <p className="text-3xl font-bold text-green-600">
+              {projects.length}
+            </p>
+          </div>
+          <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm">
+            <h2 className="text-xl font-semibold mb-2">Total Value</h2>
+            <p className="text-3xl font-bold text-purple-600">
+              {projects.reduce((sum, p) => sum + parseFloat(p.formattedBudget), 0).toFixed(2)} BNB
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
 };
 
-export default Activeprojects;
-
-
-
+export default ActiveProjects;

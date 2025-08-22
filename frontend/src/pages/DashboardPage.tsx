@@ -232,8 +232,8 @@ const DashboardPage: React.FC = () => {
             <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h2 className="text-xl font-semibold mb-4 text-gray-900">Browse Projects</h2>
               <p className="text-gray-600">Find and bid on active projects</p>
-              <Link to="/project/1" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
-                Browse Projects →
+              <Link to="/active-projects" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+                Browse Active Projects →
               </Link>
             </div>
             <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
@@ -308,8 +308,8 @@ const DashboardPage: React.FC = () => {
             {userBids.length === 0 ? (
               <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm text-center">
                 <p className="text-gray-600">No bids submitted yet</p>
-                <Link to="/project/1" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
-                  Browse Available Projects →
+                <Link to="/active-projects" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+                  Browse Active Projects →
                 </Link>
               </div>
             ) : (

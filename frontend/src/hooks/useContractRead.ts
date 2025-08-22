@@ -78,7 +78,26 @@ export const useActiveProjects = () => {
   return useReadContract({
     address: deployedContracts.TrustChain.address as `0x${string}`,
     abi: deployedContracts.TrustChain.abi,
-    functionName: 'getAllActiveProjects' as any,
+    functionName: 'getAllActiveProjects',
+    // Allow reading without being connected
+    query: {
+      enabled: true, // Always enabled
+      staleTime: 10000, // Refresh every 10 seconds
+      select: (data: any) => {
+        console.log('Raw contract data:', data);
+        if (!Array.isArray(data)) {
+          console.error('Expected array but got:', typeof data);
+          return [];
+        }
+        return data.map((project: any) => ({
+          ...project,
+          projectId: BigInt(project.projectId || 0),
+          budget: BigInt(project.budget || 0),
+          deadline: BigInt(project.deadline || 0),
+          timePeriod: BigInt(project.timePeriod || 0)
+        }));
+      }
+    }
   });
 };
 

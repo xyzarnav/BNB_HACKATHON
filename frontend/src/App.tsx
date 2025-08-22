@@ -15,6 +15,7 @@ import ContactPage from './pages/ContactPage';
 import UseCasesPage from './pages/UseCasesPage';
 import BlockExplorerPage from './pages/BlockExplorerPage';
 import DebugPage from './pages/DebugPage';
+import ActiveProjectsPage from './pages/ActiveProjectsPage';
 import '@rainbow-me/rainbowkit/styles.css';
 import './App.css';
 
@@ -30,6 +31,7 @@ function App() {
               <Routes>
                 <Route path="/" element={<TrustChainPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/active-projects" element={<ActiveProjectsPage />} />
                 <Route path="/project/:projectId" element={<ProjectPage />} />
                 <Route path="/create-project" element={<CreateProjectPage />} />
                 <Route path="/bid/:projectId" element={<BidPage />} />
