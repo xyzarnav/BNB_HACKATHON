@@ -218,3 +218,71 @@ export const useReportCorruption = () => {
 
   return { reportCorruption, isPending, error };
 };
+
+// Hook for bidders to submit completion milestone for approval
+export const useSubmitMilestone = () => {
+  const { writeContract, data: hash, isPending, error } = useWriteContract();
+
+  const submitMilestone = async (bondId: number, milestone: number) => {
+    try {
+      // For now, we'll use the approveCompletion function
+      // In a real implementation, you might want to add a separate function for bidders to submit milestones
+      await writeContract({
+        address: deployedContracts.TrustChain.address as `0x${string}`,
+        abi: deployedContracts.TrustChain.abi,
+        functionName: 'approveCompletion',
+        args: [BigInt(bondId), milestone],
+      });
+      return { hash };
+    } catch (err) {
+      console.error('Error submitting milestone:', err);
+      throw err;
+    }
+  };
+
+  return { submitMilestone, isPending, error };
+};
+
+// Hook for auditors to approve milestones
+export const useApproveAuditorMilestone = () => {
+  const { writeContract, data: hash, isPending, error } = useWriteContract();
+
+  const approveMilestone = async (bondId: number, milestone: number) => {
+    try {
+      await writeContract({
+        address: deployedContracts.TrustChain.address as `0x${string}`,
+        abi: deployedContracts.TrustChain.abi,
+        functionName: 'approveCompletion',
+        args: [BigInt(bondId), milestone],
+      });
+      return { hash };
+    } catch (err) {
+      console.error('Error approving milestone:', err);
+      throw err;
+    }
+  };
+
+  return { approveMilestone, isPending, error };
+};
+
+// Hook for project creators to reject/dispute milestones
+export const useCreateProjectDispute = () => {
+  const { writeContract, data: hash, isPending, error } = useWriteContract();
+
+  const createDispute = async (bondId: number, evidence: string) => {
+    try {
+      await writeContract({
+        address: deployedContracts.TrustChain.address as `0x${string}`,
+        abi: deployedContracts.TrustChain.abi,
+        functionName: 'createDispute',
+        args: [BigInt(bondId), evidence],
+      });
+      return { hash };
+    } catch (err) {
+      console.error('Error creating dispute:', err);
+      throw err;
+    }
+  };
+
+  return { createDispute, isPending, error };
+};

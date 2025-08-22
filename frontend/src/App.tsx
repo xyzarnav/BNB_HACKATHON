@@ -88,6 +88,14 @@ function App() {
                     </ProtectedRoute>
                   } />
 
+                  <Route path="/create-project" element={
+                    <ProtectedRoute allowedRoles={['bond_issuer']}>
+                      <Layout>
+                        <CreateProjectPage />
+                      </Layout>
+                    </ProtectedRoute>
+                  } />
+
                   {/* Auditor Routes */}
                   <Route path="/dashboard/audit" element={
                     <ProtectedRoute allowedRoles={['auditor']}>
