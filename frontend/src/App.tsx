@@ -9,6 +9,7 @@ import { config } from './config/wagmi';
 import { store, persistor } from './store';
 import Layout from './components/Layout';
 import ProtectedRoute from './components/ProtectedRoute';
+import CustomCursor from './components/CustomCursor';
 import TrustChainPage from './pages/TrustChainPage';
 import DashboardPage from './pages/DashboardPage';
 import ProjectPage from './pages/ProjectPage';
@@ -37,6 +38,7 @@ function App() {
           <QueryClientProvider client={queryClient}>
             <RainbowKitProvider>
               <Router>
+                <CustomCursor />
                 <Routes>
                   {/* Public routes */}
                   <Route path="/login" element={<LoginPage />} />
@@ -47,6 +49,15 @@ function App() {
                     <ProtectedRoute>
                       <Layout>
                         <TrustChainPage />
+                      </Layout>
+                    </ProtectedRoute>
+                  } />
+                  
+                  {/* Dashboard Route */}
+                  <Route path="/dashboard" element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <DashboardPage />
                       </Layout>
                     </ProtectedRoute>
                   } />

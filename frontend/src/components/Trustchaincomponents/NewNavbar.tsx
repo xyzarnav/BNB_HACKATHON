@@ -1,25 +1,30 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Link } from "react-router-dom";
 import { gsap } from "gsap";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAuth } from "../../hooks/useAuth";
 
 const NewNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated, logout } = useAuth();
   
-  const navbarRef = useRef<HTMLElement>(null);
+  const navbarRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  // Dummy login/logout logic for demonstration
+  // Login/logout logic
   const handleLogin = () => {
     navigate("/login");
   };
 
-  const handleLogout = () => setIsLoggedIn(false);
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,7 +75,6 @@ const NewNavbar: React.FC = () => {
   }, [isMobileMenuOpen]);
 
   const navigation = [
-    { name: "Home", href: "/" },
     { name: "Dashboard", href: "/dashboard" },
     { name: "Use Cases", href: "/usecases" },
     { name: "Block Explorer", href: "/blockexplorer" },
@@ -93,7 +97,7 @@ const NewNavbar: React.FC = () => {
           : "bg-transparent"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-8xl mx-auto px-6 sm:px-8 lg:px-12">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
@@ -107,8 +111,8 @@ const NewNavbar: React.FC = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center space-x-8">
+          {/* Desktop Navigation - More Spread Out */}
+          <div className="hidden lg:flex items-center space-x-12">
             {navigation.map((item, index) => (
               <Link
                 key={item.name}
@@ -167,7 +171,7 @@ const NewNavbar: React.FC = () => {
 
           {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            {!isLoggedIn ? (
+            {!isAuthenticated ? (
               <button
                 onClick={handleLogin}
                 className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-xl font-medium hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-105 neon-border-cyan-400"
@@ -176,9 +180,7 @@ const NewNavbar: React.FC = () => {
               </button>
             ) : (
               <div className="flex items-center space-x-3">
-                <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium neon-text-green">
-                  Connect Wallet
-                </span>
+                <ConnectButton />
                 <button
                   onClick={handleLogout}
                   className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg font-medium hover:bg-gray-700 hover:text-white transition-all duration-300 hover:neon-text-gray-300"
@@ -189,20 +191,28 @@ const NewNavbar: React.FC = () => {
             )}
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile menu button & wallet */}
           <div className="lg:hidden flex items-center space-x-3">
-            {!isLoggedIn ? (
-              <button
-                onClick={handleLogin}
-                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-lg font-medium text-sm hover:from-cyan-400 hover:to-purple-500 transition-all duration-300"
-              >
-                Login
-              </button>
-            ) : (
-              <span className="px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium text-xs">
-                Wallet
-              </span>
-            )}
+            <div className="h-10 flex items-center space-x-2">
+              {!isAuthenticated ? (
+                <button
+                  onClick={handleLogin}
+                  className="px-3 py-2 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-lg font-medium text-sm hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 whitespace-nowrap"
+                >
+                  Login
+                </button>
+              ) : (
+                <>
+                  <ConnectButton />
+                  <button
+                    onClick={handleLogout}
+                    className="px-2 py-1 bg-gray-800 text-gray-300 rounded text-xs hover:bg-gray-700 hover:text-white transition-all duration-300"
+                  >
+                    Logout
+                  </button>
+                </>
+              )}
+            </div>
             
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -266,6 +276,25 @@ const NewNavbar: React.FC = () => {
                     <span>{item.name}</span>
                   </Link>
                 ))}
+              </div>
+
+              {/* Mobile Auth Section */}
+              <div className="border-t border-cyan-500/20 pt-4 mt-4">
+                {!isAuthenticated ? (
+                  <button
+                    onClick={handleLogin}
+                    className="block w-full px-4 py-3 text-center text-gray-300 hover:text-cyan-400 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-purple-500/10 rounded-lg transition-all duration-300 hover:neon-text-cyan-400"
+                  >
+                    Login to Dashboard
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleLogout}
+                    className="block w-full px-4 py-3 text-center text-gray-300 hover:text-red-400 hover:bg-gradient-to-r hover:from-red-500/10 hover:to-red-500/10 rounded-lg transition-all duration-300"
+                  >
+                    Logout
+                  </button>
+                )}
               </div>
             </div>
           </div>
