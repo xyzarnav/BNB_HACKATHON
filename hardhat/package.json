@@ -28,5 +28,10 @@
     "hardhat-gas-reporter": "^2.2.1",
     "solidity-coverage": "^0.8.13",
     "typescript": "^5.8.2"
+  },
+  "overrides": {
+    "hardhat-deploy": {
+      "axios": "^1.11.0"
+    }
   }
 }
