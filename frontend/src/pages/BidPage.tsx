@@ -80,7 +80,7 @@ const BidPage: React.FC = () => {
     }
 
     // Check if user needs to create bidder profile first
-    if (needsBidderProfile) {
+    if (!hasBidderProfile) {
       toast.error("Please create your bidder profile first");
       return;
     }
@@ -105,16 +105,18 @@ const BidPage: React.FC = () => {
 
       // Use retry mechanism for transaction submission
       await executeWithRetry(
-        () => writeContract({
-          address: deployedContracts.TrustChain.address as `0x${string}`,
-          abi: deployedContracts.TrustChain.abi,
-          functionName: 'createBid',
-          args: [
-            BigInt(projectId || "0"),
-            proposal,
-            bidAmountInWei
-          ],
-        }),
+        async () => {
+          return await writeContract({
+            address: deployedContracts.TrustChain.address as `0x${string}`,
+            abi: deployedContracts.TrustChain.abi,
+            functionName: 'createBid',
+            args: [
+              BigInt(projectId || "0"),
+              proposal,
+              bidAmountInWei
+            ],
+          });
+        },
         () => {
           // Success callback
           toast.success("Bid submitted successfully!", { id: "bid-transaction" });
@@ -177,7 +179,7 @@ const BidPage: React.FC = () => {
           toast.error("This project is no longer accepting bids.");
         } else if (errorMessage.includes("Bidder does not exist")) {
           toast.error("Please create your bidder profile first.");
-          setNeedsBidderProfile(true);
+          setHasBidderProfile(false);
         } else {
           toast.error("Transaction failed. Please check the project details and try again.");
         }
@@ -325,41 +327,13 @@ const BidPage: React.FC = () => {
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">Submit Your Bid</h2>
                 
                 {/* Bidder Profile Status */}
-                {needsBidderProfile && (
-                  <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <h3 className="text-sm font-medium text-yellow-800">
-                          Bidder Profile Required
-                        </h3>
-                        <div className="mt-2 text-sm text-yellow-700">
-                          <p>You need to create a bidder profile before submitting bids.</p>
-                        </div>
-                        <div className="mt-4">
-                          <button
-                            onClick={createBidderProfile}
-                            disabled={isPending || isRetrying}
-                            className="btn btn-secondary text-sm"
-                          >
-                            {isPending || isRetrying ? (
-                              <div className="flex items-center">
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                Creating Profile...
-                              </div>
-                            ) : (
-                              "Create Bidder Profile"
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                <div className="mb-6">
+                  <BidderStatusCard 
+                    compact={true} 
+                    showTitle={false}
+                    onStatusChange={setHasBidderProfile}
+                  />
+                </div>
                 
                 <form onSubmit={handleSubmitBid} className="space-y-6">
                   <div>
@@ -400,7 +374,7 @@ const BidPage: React.FC = () => {
                   <div className="pt-4">
                     <button
                       type="submit"
-                      disabled={isPending || isRetrying || needsBidderProfile}
+                      disabled={isPending || isRetrying || !hasBidderProfile}
                       className="w-full bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 text-white font-bold py-4 px-8 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
                     >
                       {isPending || isRetrying ? (
@@ -408,7 +382,7 @@ const BidPage: React.FC = () => {
                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                           {isRetrying ? "Retrying..." : "Submitting Bid..."}
                         </div>
-                      ) : needsBidderProfile ? (
+                      ) : !hasBidderProfile ? (
                         <div className="flex items-center justify-center">
                           <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
