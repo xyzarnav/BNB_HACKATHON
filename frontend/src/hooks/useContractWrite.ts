@@ -39,14 +39,15 @@ export const useCreateProject = () => {
         functionName: 'createProject',
         args: [title, description, BigInt(timePeriod), budget, projectType],
       });
-      return { hash };
+      // The hash will be available through the hook's data property
+      return { success: true };
     } catch (err) {
       console.error('Error creating project:', err);
       throw err;
     }
   };
 
-  return { createProject, isPending, error };
+  return { createProject, isPending, error, hash };
 };
 
 export const useAssignAuditor = () => {

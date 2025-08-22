@@ -11,6 +11,11 @@ import {
   type Project as BlockchainProject,
   type Bid as BlockchainBid,
 } from "../hooks/useContractRead";
+import QRCodeWithLink from "../components/QRCodeWithLink";
+import { 
+  generateProjectExplorerUrl, 
+  generateBlockExplorerUrl 
+} from "../utils/blockExplorer";
 
 interface DashboardStats {
   totalProjects: number;
@@ -254,24 +259,43 @@ const DashboardPage: React.FC = () => {
               userProjects.map((project, index) => (
                 <div key={index} className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-4">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-xl font-semibold text-gray-900">{project.title}</h3>
                       <p className="text-gray-600 mt-2">{project.description}</p>
                     </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-green-600">
-                        {formatEther(project.budget)} BNB
+                    <div className="flex items-start space-x-4">
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-green-600">
+                          {formatEther(project.budget)} BNB
+                        </div>
+                        <div className={`text-sm px-2 py-1 rounded ${
+                          project.posted ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                        }`}>
+                          {project.posted ? "Active" : "Draft"}
+                        </div>
                       </div>
-                      <div className={`text-sm px-2 py-1 rounded ${
-                        project.posted ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-                      }`}>
-                        {project.posted ? "Active" : "Draft"}
-                      </div>
+                      <QRCodeWithLink
+                        value={generateProjectExplorerUrl(project.projectId)}
+                        label={`Project #${project.projectId}`}
+                        explorerUrl={generateProjectExplorerUrl(project.projectId)}
+                        size={100}
+                      />
                     </div>
                   </div>
-                  <div className="flex justify-between text-sm text-gray-500">
-                    <span>Deadline: {formatTimestamp(project.deadline)}</span>
-                    <span>Project ID: {project.projectId}</span>
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    <div className="flex space-x-4">
+                      <span>Deadline: {formatTimestamp(project.deadline)}</span>
+                      <span>Project ID: {project.projectId}</span>
+                    </div>
+                    <a
+                      href={generateBlockExplorerUrl('address', project.creator)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 text-xs"
+                      title="View creator address on block explorer"
+                    >
+                      Creator: {formatAddress(project.creator)}
+                    </a>
                   </div>
                 </div>
               ))
@@ -292,7 +316,7 @@ const DashboardPage: React.FC = () => {
               userBids.map((bid, index) => (
                 <div key={index} className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex justify-between items-start mb-4">
-                    <div>
+                    <div className="flex-1">
                       <h3 className="text-xl font-semibold text-gray-900">Bid #{bid.bidId}</h3>
                       <p className="text-gray-600 mt-2">Project ID: {bid.projectId}</p>
                       {bid.proposalIPFHash && (
@@ -301,16 +325,36 @@ const DashboardPage: React.FC = () => {
                         </p>
                       )}
                     </div>
-                    <div className="text-right">
-                      <div className="text-lg font-bold text-blue-600">
-                        {formatEther(bid.amount)} BNB
+                    <div className="flex items-start space-x-4">
+                      <div className="text-right">
+                        <div className="text-lg font-bold text-blue-600">
+                          {formatEther(bid.amount)} BNB
+                        </div>
+                        <div className={`text-sm px-2 py-1 rounded ${
+                          bid.accepted ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
+                        }`}>
+                          {bid.accepted ? "Accepted" : "Under Review"}
+                        </div>
                       </div>
-                      <div className={`text-sm px-2 py-1 rounded ${
-                        bid.accepted ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700"
-                      }`}>
-                        {bid.accepted ? "Accepted" : "Under Review"}
-                      </div>
+                      <QRCodeWithLink
+                        value={generateProjectExplorerUrl(bid.projectId)}
+                        label={`Bid #${bid.bidId}`}
+                        explorerUrl={generateProjectExplorerUrl(bid.projectId)}
+                        size={100}
+                      />
                     </div>
+                  </div>
+                  <div className="flex justify-between items-center text-sm text-gray-500">
+                    <span>Bid ID: {bid.bidId}</span>
+                    <a
+                      href={generateBlockExplorerUrl('address', bid.bidder)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 text-xs"
+                      title="View bidder address on block explorer"
+                    >
+                      Bidder: {formatAddress(bid.bidder)}
+                    </a>
                   </div>
                 </div>
               ))

@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccount } from "wagmi";
 import { useCreateProject } from "../hooks/useContractWrite";
 import { toast } from "react-hot-toast";
 import { parseEther } from "viem";
+import QRCodeWithLink from "../components/QRCodeWithLink";
+import { generateTransactionExplorerUrl } from "../utils/blockExplorer";
 
 // Project classification constants to match the smart contract
 const ProjectClassification = {
@@ -15,7 +17,7 @@ const ProjectClassification = {
 const CreateProjectPage: React.FC = () => {
   const navigate = useNavigate();
   const { isConnected } = useAccount();
-  const { createProject, isPending, error } = useCreateProject();
+  const { createProject, isPending, error, hash } = useCreateProject();
 
   const [formData, setFormData] = useState({
     title: "",
@@ -24,6 +26,16 @@ const CreateProjectPage: React.FC = () => {
     budget: "",
     projectType: ProjectClassification.FixRate,
   });
+  const [transactionHash, setTransactionHash] = useState<string>("");
+
+  // Watch for transaction hash changes from the hook
+  useEffect(() => {
+    if (hash && hash !== transactionHash) {
+      console.log('New transaction hash detected:', hash);
+      setTransactionHash(hash);
+      toast.success("Transaction confirmed! Hash: " + hash.slice(0, 10) + "...");
+    }
+  }, [hash, transactionHash]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -61,8 +73,18 @@ const CreateProjectPage: React.FC = () => {
         parseInt(formData.projectType.toString())
       );
 
-      toast.success("Project created successfully!");
-      navigate("/dashboard");
+      console.log('Transaction submitted, waiting for hash...');
+      console.log('Current hook hash:', hash);
+      
+      // The transaction hash should be available in the hash from the hook
+      if (hash) {
+        console.log('Using transaction hash from hook:', hash);
+        setTransactionHash(hash);
+        toast.success(`Transaction submitted! Hash: ${hash.slice(0, 10)}...`);
+      } else {
+        console.log('Transaction submitted, hash will be available shortly');
+        toast.success("Transaction submitted successfully! Hash will appear shortly...");
+      }
     } catch (error) {
       console.error("Error creating project:", error);
       toast.error("Failed to create project. Please try again.");
@@ -217,6 +239,70 @@ const CreateProjectPage: React.FC = () => {
               </div>
             </form>
           </div>
+
+          {/* Transaction Success Section */}
+          {transactionHash && (
+            <div className="bg-green-50 border border-green-200 rounded-xl p-6 mt-6">
+              <div className="text-center">
+                <h3 className="text-xl font-semibold text-green-800 mb-4">
+                  🎉 Project Creation Transaction Submitted!
+                </h3>
+                <p className="text-green-700 mb-6">
+                  Your project has been submitted to the blockchain. Use the QR code or link below to track your transaction.
+                </p>
+                
+                <div className="flex justify-center mb-4">
+                  <QRCodeWithLink
+                    value={generateTransactionExplorerUrl(transactionHash)}
+                    label={`TX: ${transactionHash.slice(0, 8)}...`}
+                    explorerUrl={generateTransactionExplorerUrl(transactionHash)}
+                    size={150}
+                  />
+                </div>
+
+                <div className="bg-white rounded-lg p-4 border border-green-200">
+                  <p className="text-sm text-gray-600 mb-2">Transaction Hash:</p>
+                  <p className="font-mono text-sm break-all text-gray-800 bg-gray-100 p-2 rounded">
+                    {transactionHash}
+                  </p>
+                  <div className="mt-3 flex justify-center">
+                    <a
+                      href={generateTransactionExplorerUrl(transactionHash)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+                    >
+                      View on BscScan →
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex justify-center space-x-4 mt-6">
+                  <button
+                    onClick={() => navigate("/dashboard")}
+                    className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                  >
+                    Go to Dashboard
+                  </button>
+                  <button
+                    onClick={() => {
+                      setTransactionHash("");
+                      setFormData({
+                        title: "",
+                        description: "",
+                        timePeriod: "",
+                        budget: "",
+                        projectType: ProjectClassification.FixRate,
+                      });
+                    }}
+                    className="px-6 py-2 border border-green-600 text-green-600 rounded-lg hover:bg-green-50 transition-colors"
+                  >
+                    Create Another Project
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
