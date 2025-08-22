@@ -10,12 +10,10 @@ import "@nomicfoundation/hardhat-verify";
 import "hardhat-deploy";
 import "hardhat-deploy-ethers";
 
-// If not set, it uses ours Alchemy's default API key.
-const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
 // If not set, it uses the hardhat account 0 private key.
 const deployerPrivateKey = process.env.PRIVATE_KEY ?? "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-// If not set, it uses our block explorers default API keys.
-const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "";
+// If not set, it uses BSCScan default API key
+const bscscanApiKey = process.env.BSCSCAN_API_KEY || "";
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -31,7 +29,7 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  defaultNetwork: "sepolia",
+  defaultNetwork: "bscTestnet",
   namedAccounts: {
     deployer: {
       default: 0,
@@ -39,29 +37,62 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
-        enabled: process.env.MAINNET_FORKING_ENABLED === "true",
-      },
+      chainId: 97, // BSC Testnet chainId for local testing
     },
     localhost: {
       url: "http://127.0.0.1:8545",
+      chainId: 97,
     },
-    sepolia: {
-      url: `https://eth-sepolia.g.alchemy.com/v2/${providerApiKey}`,
+    bscTestnet: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      chainId: 97,
       accounts: [deployerPrivateKey],
+      gasPrice: 20000000000, // 20 Gwei
+      verify: {
+        etherscan: {
+          apiUrl: "https://api-testnet.bscscan.com",
+        },
+      },
     },
-    mainnet: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
+    bsc: {
+      url: "https://bsc-dataseed.binance.org/",
+      chainId: 56,
       accounts: [deployerPrivateKey],
-    }
+      gasPrice: 5000000000, // 5 Gwei
+      verify: {
+        etherscan: {
+          apiUrl: "https://api.bscscan.com",
+        },
+      },
+    },
   },
   etherscan: {
-    apiKey: etherscanApiKey,
+    apiKey: {
+      bscTestnet: bscscanApiKey,
+      bsc: bscscanApiKey,
+    },
+    customChains: [
+      {
+        network: "bscTestnet",
+        chainId: 97,
+        urls: {
+          apiURL: "https://api-testnet.bscscan.com/api",
+          browserURL: "https://testnet.bscscan.com",
+        },
+      },
+      {
+        network: "bsc",
+        chainId: 56,
+        urls: {
+          apiURL: "https://api.bscscan.com/api",
+          browserURL: "https://bscscan.com",
+        },
+      },
+    ],
   },
   verify: {
     etherscan: {
-      apiKey: etherscanApiKey,
+      apiKey: bscscanApiKey,
     },
   },
   sourcify: {

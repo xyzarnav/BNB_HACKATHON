@@ -1,1413 +1,1529 @@
 {
   "TrustChain": {
-    "address": "0x3a479b0c6fAc1F2908F5302CeaA23C126295Dba1",
+    "address": "0x490e75BcA322d927CC5a9ff9e2ACE91aa8c3e7D0",
     "abi": [
       {
-        "type": "constructor",
-        "stateMutability": "undefined",
-        "payable": false,
-        "inputs": []
+        "inputs": [],
+        "stateMutability": "nonpayable",
+        "type": "constructor"
       },
       {
-        "type": "error",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          }
+        ],
         "name": "OwnableInvalidOwner",
-        "inputs": [
-          {
-            "type": "address",
-            "name": "owner"
-          }
-        ]
+        "type": "error"
       },
       {
-        "type": "error",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "account",
+            "type": "address"
+          }
+        ],
         "name": "OwnableUnauthorizedAccount",
-        "inputs": [
-          {
-            "type": "address",
-            "name": "account"
-          }
-        ]
+        "type": "error"
       },
       {
-        "type": "error",
+        "inputs": [],
         "name": "ReentrancyGuardReentrantCall",
-        "inputs": []
+        "type": "error"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "AuditorApproval",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "bondId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "uint8",
+            "indexed": false,
+            "internalType": "enum TrustChain.ProjectCompletion",
             "name": "milestone",
-            "indexed": false
+            "type": "uint8"
           }
-        ]
+        ],
+        "name": "AuditorApproval",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "AuditorAssigned",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "projectId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "address",
+            "indexed": false,
+            "internalType": "address",
             "name": "auditor",
-            "indexed": false
+            "type": "address"
           }
-        ]
+        ],
+        "name": "AuditorAssigned",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "BidSubmitted",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "bidId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256",
             "name": "projectId",
-            "indexed": false
+            "type": "uint256"
           },
           {
-            "type": "address",
+            "indexed": false,
+            "internalType": "address",
             "name": "bidder",
-            "indexed": false
+            "type": "address"
           },
           {
-            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256",
             "name": "amount",
-            "indexed": false
+            "type": "uint256"
           }
-        ]
+        ],
+        "name": "BidSubmitted",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "BidderCreated",
         "inputs": [
           {
-            "type": "address",
+            "indexed": true,
+            "internalType": "address",
             "name": "bidder",
-            "indexed": true
+            "type": "address"
           },
           {
-            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256",
             "name": "bidderId",
-            "indexed": false
+            "type": "uint256"
           }
-        ]
+        ],
+        "name": "BidderCreated",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "BondAwarded",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "projectId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "address",
+            "indexed": false,
+            "internalType": "address",
             "name": "bidder",
-            "indexed": false
+            "type": "address"
           },
           {
-            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256",
             "name": "amount",
-            "indexed": false
+            "type": "uint256"
           },
           {
-            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256",
             "name": "initialPayment",
-            "indexed": false
+            "type": "uint256"
           }
-        ]
+        ],
+        "name": "BondAwarded",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "DisputeResolved",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "disputeId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "uint8",
+            "indexed": false,
+            "internalType": "enum TrustChain.DisputeOutcome",
             "name": "outcome",
-            "indexed": false
+            "type": "uint8"
           }
-        ]
+        ],
+        "name": "DisputeResolved",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "MediatorAssigned",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "disputeId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "address",
+            "indexed": false,
+            "internalType": "address",
             "name": "mediator",
-            "indexed": false
+            "type": "address"
           }
-        ]
+        ],
+        "name": "MediatorAssigned",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "OwnershipTransferred",
         "inputs": [
           {
-            "type": "address",
+            "indexed": true,
+            "internalType": "address",
             "name": "previousOwner",
-            "indexed": true
+            "type": "address"
           },
           {
-            "type": "address",
+            "indexed": true,
+            "internalType": "address",
             "name": "newOwner",
-            "indexed": true
+            "type": "address"
           }
-        ]
+        ],
+        "name": "OwnershipTransferred",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "PaymentReleased",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "bondId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256",
             "name": "amount",
-            "indexed": false
+            "type": "uint256"
           },
           {
-            "type": "uint8",
+            "indexed": false,
+            "internalType": "enum TrustChain.ProjectCompletion",
             "name": "newCompletion",
-            "indexed": false
+            "type": "uint8"
           }
-        ]
+        ],
+        "name": "PaymentReleased",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "ProjectCreated",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "projectId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "address",
+            "indexed": false,
+            "internalType": "address",
             "name": "creator",
-            "indexed": false
+            "type": "address"
           },
           {
-            "type": "uint256",
+            "indexed": false,
+            "internalType": "uint256",
             "name": "budget",
-            "indexed": false
+            "type": "uint256"
           },
           {
-            "type": "uint8",
+            "indexed": false,
+            "internalType": "enum TrustChain.ProjectClassfication",
             "name": "projectType",
-            "indexed": false
+            "type": "uint8"
           }
-        ]
+        ],
+        "name": "ProjectCreated",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "TransparencyLog",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "projectId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "string",
+            "indexed": false,
+            "internalType": "string",
             "name": "action",
-            "indexed": false
+            "type": "string"
           },
           {
-            "type": "address",
+            "indexed": false,
+            "internalType": "address",
             "name": "actor",
-            "indexed": false
+            "type": "address"
           }
-        ]
+        ],
+        "name": "TransparencyLog",
+        "type": "event"
       },
       {
-        "type": "event",
         "anonymous": false,
-        "name": "WhistleblowerReport",
         "inputs": [
           {
-            "type": "uint256",
+            "indexed": true,
+            "internalType": "uint256",
             "name": "projectId",
-            "indexed": true
+            "type": "uint256"
           },
           {
-            "type": "bytes32",
+            "indexed": false,
+            "internalType": "bytes32",
             "name": "reportHash",
-            "indexed": false
+            "type": "bytes32"
           }
-        ]
+        ],
+        "name": "WhistleblowerReport",
+        "type": "event"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum TrustChain.ProjectCompletion",
+            "name": "_milestone",
+            "type": "uint8"
+          }
+        ],
         "name": "approveCompletion",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_bondId"
-          },
-          {
-            "type": "uint8",
-            "name": "_milestone"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
         "name": "approvedAuditors",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "bool",
-            "name": ""
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "approvedAuditorsList",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "address",
-            "name": ""
+            "internalType": "address",
+            "name": "",
+            "type": "address"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          }
+        ],
         "name": "assignAuditor",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_disputeId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "_mediator",
+            "type": "address"
+          }
+        ],
         "name": "assignMediator",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_disputeId"
-          },
-          {
-            "type": "address",
-            "name": "_mediator"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "bidWinner",
+            "type": "uint256"
+          }
+        ],
         "name": "awardBond",
-        "constant": false,
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bidWiner",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "payable",
-        "payable": true,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          },
-          {
-            "type": "uint256",
-            "name": "bidWinner"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "uint256",
-            "name": "_bidWiner"
-          }
-        ]
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "bidCount",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
         "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          }
+        ],
         "name": "bidEvaluation",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "bidderCount",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
         "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
         "name": "bidderIds",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "bidders",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "uint256",
-            "name": "bidderId"
+            "internalType": "uint256",
+            "name": "bidderId",
+            "type": "uint256"
           },
           {
-            "type": "address",
-            "name": "bidderAddress"
+            "internalType": "address",
+            "name": "bidderAddress",
+            "type": "address"
           },
           {
-            "type": "uint256",
-            "name": "totalBids"
+            "internalType": "uint256",
+            "name": "totalBids",
+            "type": "uint256"
           },
           {
-            "type": "uint256",
-            "name": "reputationScore"
+            "internalType": "uint256",
+            "name": "reputationScore",
+            "type": "uint256"
           },
           {
-            "type": "bool",
-            "name": "blacklisted"
+            "internalType": "bool",
+            "name": "blacklisted",
+            "type": "bool"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "bids",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "uint256",
-            "name": "bidId"
+            "internalType": "uint256",
+            "name": "bidId",
+            "type": "uint256"
           },
           {
-            "type": "uint256",
-            "name": "projectId"
+            "internalType": "uint256",
+            "name": "projectId",
+            "type": "uint256"
           },
           {
-            "type": "address",
-            "name": "bidder"
+            "internalType": "address",
+            "name": "bidder",
+            "type": "address"
           },
           {
-            "type": "uint256",
-            "name": "amount"
+            "internalType": "uint256",
+            "name": "amount",
+            "type": "uint256"
           },
           {
-            "type": "string",
-            "name": "proposalIPFHash"
+            "internalType": "string",
+            "name": "proposalIPFHash",
+            "type": "string"
           },
           {
-            "type": "bool",
-            "name": "accepted"
+            "internalType": "bool",
+            "name": "accepted",
+            "type": "bool"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bidderId",
+            "type": "uint256"
+          }
+        ],
         "name": "blacklistBidder",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_bidderId"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "bondCount",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
         "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "bondWinners",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_proposalIPFHash",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_amount",
+            "type": "uint256"
+          }
+        ],
         "name": "createBid",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          },
-          {
-            "type": "string",
-            "name": "_proposalIPFHash"
-          },
-          {
-            "type": "uint256",
-            "name": "_amount"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "createBidder",
-        "constant": false,
-        "payable": false,
-        "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_evidence",
+            "type": "string"
+          }
+        ],
         "name": "createDispute",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_bondId"
-          },
-          {
-            "type": "string",
-            "name": "_evidence"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "string",
+            "name": "_title",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_description",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_timeperiod",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_budget",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum TrustChain.ProjectClassfication",
+            "name": "_jobType",
+            "type": "uint8"
+          }
+        ],
         "name": "createProject",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "string",
-            "name": "_title"
-          },
-          {
-            "type": "string",
-            "name": "_description"
-          },
-          {
-            "type": "uint256",
-            "name": "_timeperiod"
-          },
-          {
-            "type": "uint256",
-            "name": "_budget"
-          },
-          {
-            "type": "uint8",
-            "name": "_jobType"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "disputeCount",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
         "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "disputes",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "uint256",
-            "name": "disputeId"
+            "internalType": "uint256",
+            "name": "disputeId",
+            "type": "uint256"
           },
           {
-            "type": "uint256",
-            "name": "bondId"
+            "internalType": "uint256",
+            "name": "bondId",
+            "type": "uint256"
           },
           {
-            "type": "address",
-            "name": "creator"
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
           },
           {
-            "type": "address",
-            "name": "mediator"
+            "internalType": "address",
+            "name": "mediator",
+            "type": "address"
           },
           {
-            "type": "string",
-            "name": "evidence"
+            "internalType": "string",
+            "name": "evidence",
+            "type": "string"
           },
           {
-            "type": "bool",
-            "name": "resolved"
+            "internalType": "bool",
+            "name": "resolved",
+            "type": "bool"
           },
           {
-            "type": "uint8",
-            "name": "outcome"
+            "internalType": "enum TrustChain.DisputeOutcome",
+            "name": "outcome",
+            "type": "uint8"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "evaluatedbids",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "bool",
-            "name": ""
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "getAllActiveProjects",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
         "outputs": [
           {
-            "type": "tuple[]",
-            "name": "",
             "components": [
               {
-                "type": "address",
-                "name": "creator"
+                "internalType": "address",
+                "name": "creator",
+                "type": "address"
               },
               {
-                "type": "uint256",
-                "name": "projectId"
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
               },
               {
-                "type": "string",
-                "name": "description"
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
               },
               {
-                "type": "string",
-                "name": "title"
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
               },
               {
-                "type": "uint256",
-                "name": "timePeriod"
+                "internalType": "uint256",
+                "name": "timePeriod",
+                "type": "uint256"
               },
               {
-                "type": "uint256",
-                "name": "deadline"
+                "internalType": "uint256",
+                "name": "deadline",
+                "type": "uint256"
               },
               {
-                "type": "uint256",
-                "name": "budget"
+                "internalType": "uint256",
+                "name": "budget",
+                "type": "uint256"
               },
               {
-                "type": "bool",
-                "name": "posted"
+                "internalType": "bool",
+                "name": "posted",
+                "type": "bool"
               },
               {
-                "type": "uint8",
-                "name": "projectType"
+                "internalType": "enum TrustChain.ProjectClassfication",
+                "name": "projectType",
+                "type": "uint8"
               },
               {
-                "type": "address",
-                "name": "auditor"
+                "internalType": "address",
+                "name": "auditor",
+                "type": "address"
               },
               {
-                "type": "bool",
-                "name": "hasAuditor"
+                "internalType": "bool",
+                "name": "hasAuditor",
+                "type": "bool"
               }
-            ]
+            ],
+            "internalType": "struct TrustChain.Project[]",
+            "name": "",
+            "type": "tuple[]"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "getAllProjects",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
         "outputs": [
           {
-            "type": "tuple[]",
-            "name": "",
             "components": [
               {
-                "type": "address",
-                "name": "creator"
+                "internalType": "address",
+                "name": "creator",
+                "type": "address"
               },
               {
-                "type": "uint256",
-                "name": "projectId"
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
               },
               {
-                "type": "string",
-                "name": "description"
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
               },
               {
-                "type": "string",
-                "name": "title"
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
               },
               {
-                "type": "uint256",
-                "name": "timePeriod"
+                "internalType": "uint256",
+                "name": "timePeriod",
+                "type": "uint256"
               },
               {
-                "type": "uint256",
-                "name": "deadline"
+                "internalType": "uint256",
+                "name": "deadline",
+                "type": "uint256"
               },
               {
-                "type": "uint256",
-                "name": "budget"
+                "internalType": "uint256",
+                "name": "budget",
+                "type": "uint256"
               },
               {
-                "type": "bool",
-                "name": "posted"
+                "internalType": "bool",
+                "name": "posted",
+                "type": "bool"
               },
               {
-                "type": "uint8",
-                "name": "projectType"
+                "internalType": "enum TrustChain.ProjectClassfication",
+                "name": "projectType",
+                "type": "uint8"
               },
               {
-                "type": "address",
-                "name": "auditor"
+                "internalType": "address",
+                "name": "auditor",
+                "type": "address"
               },
               {
-                "type": "bool",
-                "name": "hasAuditor"
+                "internalType": "bool",
+                "name": "hasAuditor",
+                "type": "bool"
               }
-            ]
+            ],
+            "internalType": "struct TrustChain.Project[]",
+            "name": "",
+            "type": "tuple[]"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_bidder",
+            "type": "address"
+          }
+        ],
         "name": "getBidsByUser",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": "_bidder"
-          }
-        ],
         "outputs": [
           {
-            "type": "tuple[]",
-            "name": "",
             "components": [
               {
-                "type": "uint256",
-                "name": "bidId"
+                "internalType": "uint256",
+                "name": "bidId",
+                "type": "uint256"
               },
               {
-                "type": "uint256",
-                "name": "projectId"
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
               },
               {
-                "type": "address",
-                "name": "bidder"
+                "internalType": "address",
+                "name": "bidder",
+                "type": "address"
               },
               {
-                "type": "uint256",
-                "name": "amount"
+                "internalType": "uint256",
+                "name": "amount",
+                "type": "uint256"
               },
               {
-                "type": "string",
-                "name": "proposalIPFHash"
+                "internalType": "string",
+                "name": "proposalIPFHash",
+                "type": "string"
               },
               {
-                "type": "bool",
-                "name": "accepted"
+                "internalType": "bool",
+                "name": "accepted",
+                "type": "bool"
               }
-            ]
+            ],
+            "internalType": "struct TrustChain.Bid[]",
+            "name": "",
+            "type": "tuple[]"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          }
+        ],
         "name": "getCompletionLevel",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_bondId"
-          }
-        ],
         "outputs": [
           {
-            "type": "uint8",
-            "name": ""
+            "internalType": "enum TrustChain.ProjectCompletion",
+            "name": "",
+            "type": "uint8"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "enum TrustChain.ProjectCompletion",
+            "name": "_completion",
+            "type": "uint8"
+          }
+        ],
         "name": "getCompletionPercentage",
-        "constant": true,
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "stateMutability": "pure",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint8",
-            "name": "_completion"
-          }
-        ],
-        "outputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ]
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          }
+        ],
         "name": "getProjectBidWinner",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          }
-        ],
         "outputs": [
           {
-            "type": "uint256",
-            "name": "_bidWinnerId"
+            "internalType": "uint256",
+            "name": "_bidWinnerId",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          }
+        ],
         "name": "getProjectById",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          }
-        ],
         "outputs": [
           {
-            "type": "string",
-            "name": "title"
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
           },
           {
-            "type": "uint256",
-            "name": "budget"
+            "internalType": "uint256",
+            "name": "budget",
+            "type": "uint256"
           },
           {
-            "type": "string",
-            "name": "description"
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
           },
           {
-            "type": "uint256",
-            "name": "deadline"
+            "internalType": "uint256",
+            "name": "deadline",
+            "type": "uint256"
           },
           {
-            "type": "bool",
-            "name": "posted"
+            "internalType": "bool",
+            "name": "posted",
+            "type": "bool"
           },
           {
-            "type": "uint256",
-            "name": "Id"
+            "internalType": "uint256",
+            "name": "Id",
+            "type": "uint256"
           },
           {
-            "type": "uint8",
-            "name": "projectType"
+            "internalType": "enum TrustChain.ProjectClassfication",
+            "name": "projectType",
+            "type": "uint8"
           },
           {
-            "type": "address",
-            "name": "creator"
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
           },
           {
-            "type": "uint256",
-            "name": "timePeriod"
+            "internalType": "uint256",
+            "name": "timePeriod",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          }
+        ],
         "name": "getProjectLogs",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          }
-        ],
         "outputs": [
           {
-            "type": "tuple[]",
-            "name": "",
             "components": [
               {
-                "type": "address",
-                "name": "actor"
+                "internalType": "address",
+                "name": "actor",
+                "type": "address"
               },
               {
-                "type": "string",
-                "name": "action"
+                "internalType": "string",
+                "name": "action",
+                "type": "string"
               },
               {
-                "type": "uint256",
-                "name": "timestamp"
+                "internalType": "uint256",
+                "name": "timestamp",
+                "type": "uint256"
               }
-            ]
+            ],
+            "internalType": "struct TrustChain.LogEntry[]",
+            "name": "",
+            "type": "tuple[]"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_creator",
+            "type": "address"
+          }
+        ],
         "name": "getProjectsByCreator",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": "_creator"
-          }
-        ],
         "outputs": [
           {
-            "type": "tuple[]",
-            "name": "",
             "components": [
               {
-                "type": "address",
-                "name": "creator"
+                "internalType": "address",
+                "name": "creator",
+                "type": "address"
               },
               {
-                "type": "uint256",
-                "name": "projectId"
+                "internalType": "uint256",
+                "name": "projectId",
+                "type": "uint256"
               },
               {
-                "type": "string",
-                "name": "description"
+                "internalType": "string",
+                "name": "description",
+                "type": "string"
               },
               {
-                "type": "string",
-                "name": "title"
+                "internalType": "string",
+                "name": "title",
+                "type": "string"
               },
               {
-                "type": "uint256",
-                "name": "timePeriod"
+                "internalType": "uint256",
+                "name": "timePeriod",
+                "type": "uint256"
               },
               {
-                "type": "uint256",
-                "name": "deadline"
+                "internalType": "uint256",
+                "name": "deadline",
+                "type": "uint256"
               },
               {
-                "type": "uint256",
-                "name": "budget"
+                "internalType": "uint256",
+                "name": "budget",
+                "type": "uint256"
               },
               {
-                "type": "bool",
-                "name": "posted"
+                "internalType": "bool",
+                "name": "posted",
+                "type": "bool"
               },
               {
-                "type": "uint8",
-                "name": "projectType"
+                "internalType": "enum TrustChain.ProjectClassfication",
+                "name": "projectType",
+                "type": "uint8"
               },
               {
-                "type": "address",
-                "name": "auditor"
+                "internalType": "address",
+                "name": "auditor",
+                "type": "address"
               },
               {
-                "type": "bool",
-                "name": "hasAuditor"
+                "internalType": "bool",
+                "name": "hasAuditor",
+                "type": "bool"
               }
-            ]
+            ],
+            "internalType": "struct TrustChain.Project[]",
+            "name": "",
+            "type": "tuple[]"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "hasBidded",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": ""
-          },
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "bool",
-            "name": ""
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          }
+        ],
         "name": "isProjectLate",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          }
-        ],
         "outputs": [
           {
-            "type": "bool",
-            "name": ""
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "owner",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
         "outputs": [
           {
-            "type": "address",
-            "name": ""
+            "internalType": "address",
+            "name": "",
+            "type": "address"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "projectAuditors",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          },
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "address",
-            "name": ""
+            "internalType": "address",
+            "name": "",
+            "type": "address"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "projectBids",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          },
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "projectId",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
         "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "projects",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ],
         "outputs": [
           {
-            "type": "address",
-            "name": "creator"
+            "internalType": "address",
+            "name": "creator",
+            "type": "address"
           },
           {
-            "type": "uint256",
-            "name": "projectId"
+            "internalType": "uint256",
+            "name": "projectId",
+            "type": "uint256"
           },
           {
-            "type": "string",
-            "name": "description"
+            "internalType": "string",
+            "name": "description",
+            "type": "string"
           },
           {
-            "type": "string",
-            "name": "title"
+            "internalType": "string",
+            "name": "title",
+            "type": "string"
           },
           {
-            "type": "uint256",
-            "name": "timePeriod"
+            "internalType": "uint256",
+            "name": "timePeriod",
+            "type": "uint256"
           },
           {
-            "type": "uint256",
-            "name": "deadline"
+            "internalType": "uint256",
+            "name": "deadline",
+            "type": "uint256"
           },
           {
-            "type": "uint256",
-            "name": "budget"
+            "internalType": "uint256",
+            "name": "budget",
+            "type": "uint256"
           },
           {
-            "type": "bool",
-            "name": "posted"
+            "internalType": "bool",
+            "name": "posted",
+            "type": "bool"
           },
           {
-            "type": "uint8",
-            "name": "projectType"
+            "internalType": "enum TrustChain.ProjectClassfication",
+            "name": "projectType",
+            "type": "uint8"
           },
           {
-            "type": "address",
-            "name": "auditor"
+            "internalType": "address",
+            "name": "auditor",
+            "type": "address"
           },
           {
-            "type": "bool",
-            "name": "hasAuditor"
+            "internalType": "bool",
+            "name": "hasAuditor",
+            "type": "bool"
           }
-        ]
+        ],
+        "stateMutability": "view",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_auditor",
+            "type": "address"
+          }
+        ],
         "name": "registerAuditor",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": "_auditor"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum TrustChain.ProjectCompletion",
+            "name": "_newCompletion",
+            "type": "uint8"
+          }
+        ],
         "name": "releasePayment",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_bondId"
-          },
-          {
-            "type": "uint8",
-            "name": "_newCompletion"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_auditor",
+            "type": "address"
+          }
+        ],
         "name": "removeAuditor",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": "_auditor"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [],
         "name": "renounceOwnership",
-        "constant": false,
-        "payable": false,
-        "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_evidence",
+            "type": "string"
+          }
+        ],
         "name": "reportCorruption",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_projectId"
-          },
-          {
-            "type": "string",
-            "name": "_evidence"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_disputeId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum TrustChain.DisputeOutcome",
+            "name": "_outcome",
+            "type": "uint8"
+          }
+        ],
         "name": "resolveDispute",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "uint256",
-            "name": "_disputeId"
-          },
-          {
-            "type": "uint8",
-            "name": "_outcome"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "newOwner",
+            "type": "address"
+          }
+        ],
         "name": "transferOwnership",
-        "constant": false,
-        "payable": false,
-        "inputs": [
-          {
-            "type": "address",
-            "name": "newOwner"
-          }
-        ],
-        "outputs": []
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
       },
       {
-        "type": "function",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "name": "transparencyLogs",
-        "constant": true,
-        "stateMutability": "view",
-        "payable": false,
-        "inputs": [
+        "outputs": [
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "address",
+            "name": "actor",
+            "type": "address"
           },
           {
-            "type": "uint256",
-            "name": ""
+            "internalType": "string",
+            "name": "action",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
           }
         ],
-        "outputs": [
-          {
-            "type": "address",
-            "name": "actor"
-          },
-          {
-            "type": "string",
-            "name": "action"
-          },
-          {
-            "type": "uint256",
-            "name": "timestamp"
-          }
-        ]
-      },
-      {
-        "type": "function",
-        "name": "version",
-        "constant": true,
         "stateMutability": "view",
-        "payable": false,
-        "inputs": [],
-        "outputs": [
-          {
-            "type": "uint256",
-            "name": ""
-          }
-        ]
+        "type": "function"
       },
       {
-        "type": "receive",
-        "stateMutability": "payable"
+        "inputs": [],
+        "name": "version",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "stateMutability": "payable",
+        "type": "receive"
       }
     ]
   }

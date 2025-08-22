@@ -1,10 +1,9 @@
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
-import { mainnet, hardhat, sepolia } from 'wagmi/chains';
-import { bscTestnet } from 'wagmi/chains';
+import { bsc, bscTestnet } from 'wagmi/chains';
 
 export const config = getDefaultConfig({
   appName: 'TrustChain DApp',
-  projectId: 'YOUR_WALLET_CONNECT_PROJECT_ID', // Get from https://cloud.walletconnect.com
-  chains: [sepolia, hardhat, mainnet, bscTestnet], // Added sepolia as primary chain
+  projectId: process.env.REACT_APP_WALLET_CONNECT_PROJECT_ID || 'YOUR_WALLET_CONNECT_PROJECT_ID',
+  chains: [bscTestnet, bsc], // BSC Testnet as primary chain, BSC Mainnet as secondary
   ssr: true,
 });

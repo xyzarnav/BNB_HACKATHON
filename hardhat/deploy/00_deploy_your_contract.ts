@@ -1,38 +1,60 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { exec } from "child_process";
+import { promisify } from "util";
+
+const execAsync = promisify(exec);
 
 /**
- * Deploys a contract named "TrustChain" using the deployer account
+ * Deploys a contract named "TrustChain" using the deployer account and updates frontend files
  *
  * @param hre HardhatRuntimeEnvironment object.
  */
 const deployTrustChain: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  /*
-    On localhost, the deployer account is the one that comes with Hardhat, which is already funded.
-
-    When deploying to live networks (e.g `yarn deploy --network sepolia`), the deployer account
-    should have sufficient balance to pay for the gas fees for contract creation.
-
-    You can generate a random account with `yarn generate` or `yarn account:import` to import your
-    existing PK which will fill DEPLOYER_PRIVATE_KEY_ENCRYPTED in the .env file (then used on hardhat.config.ts)
-    You can run the `yarn account` command to check your balance in every network.
-  */
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
-  await deploy("TrustChain", {
+  // Deploy the contract
+  const trustChain = await deploy("TrustChain", {
     from: deployer,
-    // Contract constructor arguments
     args: [],
     log: true,
-    // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-    // automatically mining the contract deployment transaction. There is no effect on live networks.
     autoMine: true,
   });
+
+  // Verify the contract if we're on a network that supports it
+  if (hre.network.name !== "hardhat" && hre.network.name !== "localhost") {
+    try {
+      console.log("Verifying contract on explorer...");
+      await hre.run("verify:verify", {
+        address: trustChain.address,
+        constructorArguments: [],
+      });
+      console.log("Contract verified successfully");
+    } catch (error) {
+      console.log("Error verifying contract:", error);
+    }
+  }
+
+  // Update frontend contract files
+  try {
+    console.log("Updating frontend contract files...");
+    await execAsync("npx hardhat run scripts/updateFrontend.ts");
+    console.log("Frontend contract files updated successfully");
+  } catch (error) {
+    console.error("Error updating frontend files:", error);
+  }
+
+  // Log deployment info
+  console.log("\n📝 Contract Deployment Summary:");
+  console.log("===============================");
+  console.log(`🔥 TrustChain deployed to: ${trustChain.address}`);
+  console.log(`🌍 Network: ${hre.network.name}`);
+  console.log(`👤 Deployer: ${deployer}`);
+  console.log("===============================\n");
 };
 
 export default deployTrustChain;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
-// e.g. yarn deploy --tags YourContract
 deployTrustChain.tags = ["TrustChain"];

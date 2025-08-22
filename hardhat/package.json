@@ -4,10 +4,17 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
-    "deploy": "hardhat run scripts/deploy.ts",
-    "deploy:bsc": "hardhat run scripts/deploy.ts --network bscTestnet",
+    "deploy": "hardhat deploy",
+    "deploy:bsc": "hardhat deploy --network bscTestnet",
+    "deploy:mainnet": "hardhat deploy --network bsc",
+    "verify:bsc": "hardhat verify --network bscTestnet",
+    "verify:mainnet": "hardhat verify --network bsc",
+    "update-frontend": "hardhat run scripts/updateFrontend.ts",
     "node": "hardhat node",
-    "clean": "hardhat clean"
+    "clean": "hardhat clean",
+    "account": "hardhat account",
+    "generate": "hardhat generate",
+    "account:import": "hardhat account:import"
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.0.0",

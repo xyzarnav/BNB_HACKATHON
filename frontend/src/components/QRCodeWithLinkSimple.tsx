@@ -61,3 +61,4 @@ const QRCodeWithLinkSimple: React.FC<QRCodeWithLinkProps> = ({
 };
 
 export default QRCodeWithLinkSimple;
+
