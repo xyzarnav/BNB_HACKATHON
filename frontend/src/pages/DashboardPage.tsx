@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAccount } from "wagmi";
 import { formatEther } from "viem";
+import { useAuth } from "../hooks/useAuth";
 import {
   useProjectCount,
   useBidCount,
@@ -38,6 +39,7 @@ const DashboardPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   const { address, isConnected } = useAccount();
+  const { user } = useAuth();
 
   // Contract read hooks
   const { data: projectCount, error: projectCountError } = useProjectCount();
@@ -167,6 +169,7 @@ const DashboardPage: React.FC = () => {
 
         {/* Stats Overview */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {/* Common stats for all roles */}
           <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
             <div className="text-2xl font-bold text-blue-600">{stats.totalProjects}</div>
             <div className="text-sm text-gray-600">Total Projects</div>
@@ -175,17 +178,29 @@ const DashboardPage: React.FC = () => {
             <div className="text-2xl font-bold text-green-600">{stats.totalBids}</div>
             <div className="text-sm text-gray-600">Total Bids</div>
           </div>
-          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-            <div className="text-2xl font-bold text-purple-600">{stats.userProjects}</div>
-            <div className="text-sm text-gray-600">My Projects</div>
-          </div>
-          <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
-            <div className="text-2xl font-bold text-orange-600">{stats.userBids}</div>
-            <div className="text-sm text-gray-600">My Bids</div>
-          </div>
+
+          {/* Role-specific stats */}
+          {user?.role === 'bond_issuer' && (
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="text-2xl font-bold text-purple-600">{stats.userProjects}</div>
+              <div className="text-sm text-gray-600">My Projects</div>
+            </div>
+          )}
+          {user?.role === 'bidder' && (
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="text-2xl font-bold text-orange-600">{stats.userBids}</div>
+              <div className="text-sm text-gray-600">My Bids</div>
+            </div>
+          )}
+          {user?.role === 'auditor' && (
+            <div className="bg-white rounded-lg p-4 border border-gray-200 shadow-sm">
+              <div className="text-2xl font-bold text-indigo-600">{stats.totalProjects}</div>
+              <div className="text-sm text-gray-600">Projects to Audit</div>
+            </div>
+          )}
         </div>
 
-        {/* Tab Navigation */}
+        {/* Tab Navigation - Role-specific tabs */}
         <div className="flex space-x-1 mb-6">
           <button
             onClick={() => setActiveTab("overview")}
@@ -197,45 +212,90 @@ const DashboardPage: React.FC = () => {
           >
             Overview
           </button>
-          <button
-            onClick={() => setActiveTab("projects")}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "projects"
-                ? "bg-blue-600 text-white shadow-md"
-                : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
-            }`}
-          >
-            My Projects
-          </button>
-          <button
-            onClick={() => setActiveTab("bids")}
-            className={`px-4 py-2 rounded-lg transition-colors ${
-              activeTab === "bids"
-                ? "bg-blue-600 text-white shadow-md"
-                : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
-            }`}
-          >
-            My Bids
-          </button>
+          
+          {user?.role === 'bond_issuer' && (
+            <button
+              onClick={() => setActiveTab("projects")}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === "projects"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              My Projects
+            </button>
+          )}
+          
+          {user?.role === 'bidder' && (
+            <button
+              onClick={() => setActiveTab("bids")}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === "bids"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              My Bids
+            </button>
+          )}
+
+          {user?.role === 'auditor' && (
+            <button
+              onClick={() => setActiveTab("audits")}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                activeTab === "audits"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "bg-white text-gray-700 border border-gray-200 hover:bg-gray-50"
+              }`}
+            >
+              Projects to Audit
+            </button>
+          )}
         </div>
 
         {/* Tab Content */}
         {activeTab === "overview" && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Role-specific actions */}
+            {user?.role === 'bond_issuer' && (
+              <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">Create Project</h2>
+                <p className="text-gray-600">Launch a new transparent project</p>
+                <Link to="/create-project" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+                  Create Project →
+                </Link>
+              </div>
+            )}
+            
+            {user?.role === 'bidder' && (
+              <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">Browse Projects</h2>
+                <p className="text-gray-600">Find and bid on active projects</p>
+                <Link to="/projects" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+                  Browse Active Projects →
+                </Link>
+              </div>
+            )}
+
+            {user?.role === 'auditor' && (
+              <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900">Audit Projects</h2>
+                <p className="text-gray-600">Review and verify project milestones</p>
+                <Link to="/dashboard/audit" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+                  View Projects to Audit →
+                </Link>
+              </div>
+            )}
+
+            {/* Common actions for all roles */}
             <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">Create Project</h2>
-              <p className="text-gray-600">Launch a new transparent project</p>
-              <Link to="/create-project" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
-                Create Project →
+              <h2 className="text-xl font-semibold mb-4 text-gray-900">View Projects</h2>
+              <p className="text-gray-600">Browse all active projects</p>
+              <Link to="/projects" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
+                View All Projects →
               </Link>
             </div>
-            <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900">Browse Projects</h2>
-              <p className="text-gray-600">Find and bid on active projects</p>
-              <Link to="/active-projects" className="text-blue-600 hover:text-blue-700 mt-4 inline-block font-medium">
-                Browse Active Projects →
-              </Link>
-            </div>
+
             <div className="bg-white rounded-lg p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
               <h2 className="text-xl font-semibold mb-4 text-gray-900">Profile</h2>
               <p className="text-gray-600">Manage your account settings</p>
