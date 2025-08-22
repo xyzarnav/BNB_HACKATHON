@@ -66,6 +66,8 @@ const NewNavbar: React.FC = () => {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200"
+              title={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             >
               <svg
                 className="w-6 h-6"

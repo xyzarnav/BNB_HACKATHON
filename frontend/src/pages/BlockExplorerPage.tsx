@@ -40,10 +40,13 @@ const BlockExplorerPage = () => {
             {/* Search Form */}
             <form onSubmit={handleSearch} className="max-w-2xl mx-auto">
               <div className="flex gap-2">
+                <label htmlFor="searchType" className="sr-only">Search Type</label>
                 <select
+                  id="searchType"
+                  aria-label="Search Type"
                   className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   value={searchType}
-                  onChange={(e) => setSearchType(e.target.value as any)}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSearchType(e.target.value as 'transaction' | 'address' | 'block')}
                 >
                   <option value="transaction">Transaction</option>
                   <option value="address">Address</option>
