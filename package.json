@@ -1,0 +1,32 @@
+{
+  "name": "bnb-trustchain",
+  "version": "1.0.0",
+  "description": "TrustChain DApp - Anti-Corruption Blockchain Platform",
+  "scripts": {
+    "chain": "cd hardhat && npm run node",
+    "deploy": "cd hardhat && npm run deploy",
+    "deploy:sepolia": "cd hardhat && npm run deploy:sepolia",
+    "compile": "cd hardhat && npm run compile",
+    "frontend:dev": "cd frontend && npm run dev",
+    "frontend:build": "cd frontend && npm run build",
+    "dev": "concurrently \"npm run chain\" \"npm run deploy\" \"npm run frontend:dev\"",
+    "install:all": "npm install && cd hardhat && npm install && cd ../frontend && npm install",
+    "setup": "npm run install:all && npm run compile && npm run deploy"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "smart-contracts",
+    "anti-corruption",
+    "trustchain",
+    "react",
+    "vite",
+    "hardhat"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
+
