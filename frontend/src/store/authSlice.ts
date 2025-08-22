@@ -127,13 +127,24 @@ export const verifyToken = createAsyncThunk(
 
 export const logoutUser = createAsyncThunk(
   'auth/logout',
-  async (_, { rejectWithValue }) => {
+  async (_, { getState, rejectWithValue }) => {
     try {
+      const state = getState() as { auth: AuthState };
+      if (state.auth.token) {
+        axios.defaults.headers.common['Authorization'] = `Bearer ${state.auth.token}`;
+      }
       await axios.post('/auth/logout');
+      // Clean up
       delete axios.defaults.headers.common['Authorization'];
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
       return null;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.message || 'Logout failed');
+      // Even if the API call fails, we want to clean up the local state
+      delete axios.defaults.headers.common['Authorization'];
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      return null;
     }
   }
 );

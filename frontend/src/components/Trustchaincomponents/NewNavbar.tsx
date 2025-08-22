@@ -1,12 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAuth } from "../../hooks/useAuth";
+import { toast } from "react-hot-toast";
 
 const NewNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      // Logout is always considered successful since we clean up local state
+      toast.success("Logged out successfully");
+      navigate("/signup");
+    } catch (error) {
+      // This should rarely happen, but just in case
+      console.error('Logout error:', error);
+      // Still navigate to signup since we've cleaned up the state
+      navigate("/signup");
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -73,14 +89,33 @@ const NewNavbar: React.FC = () => {
             ))}
           </div>
 
-          {/* Desktop Connect Wallet Button */}
+          {/* Desktop Connect Wallet and Logout */}
           <div className="hidden lg:flex items-center space-x-4">
             <ConnectButton />
+            {user && (
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Logout
+              </button>
+            )}
           </div>
 
           {/* Mobile menu button */}
           <div className="lg:hidden flex items-center space-x-4">
             <ConnectButton />
+            {user && (
+              <button
+                onClick={handleLogout}
+                className="p-2 text-red-600 hover:text-red-700"
+                title="Logout"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+              </button>
+            )}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200"
@@ -127,6 +162,17 @@ const NewNavbar: React.FC = () => {
                   {item.name}
                 </Link>
               ))}
+              {user && (
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-4 py-2 text-red-600 hover:text-red-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                >
+                  Logout
+                </button>
+              )}
             </div>
           </div>
         )}
