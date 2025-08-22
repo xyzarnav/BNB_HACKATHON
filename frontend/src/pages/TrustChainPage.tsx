@@ -2,7 +2,6 @@ import React from "react";
 import NewNavbar from "../components/Trustchaincomponents/NewNavbar";
 import HeaderHero from "../components/Trustchaincomponents/HeaderHero";
 import MainContent from "../components/Trustchaincomponents/MainContent";
-import Footer from "../components/Trustchaincomponents/Footer";
 
 /**
  * TrustChain Landing Page
@@ -18,9 +17,6 @@ const TrustchainPage: React.FC = () => {
 
       {/* Main Content */}
       <MainContent />
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };

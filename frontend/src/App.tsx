@@ -4,6 +4,7 @@ import { RainbowKitProvider } from '@rainbow-me/rainbowkit';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { config } from './config/wagmi';
+import Layout from './components/Layout';
 import TrustChainPage from './pages/TrustChainPage';
 import DashboardPage from './pages/DashboardPage';
 import ProjectPage from './pages/ProjectPage';
@@ -25,7 +26,7 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <RainbowKitProvider>
           <Router>
-            <div className="App">
+            <Layout>
               <Routes>
                 <Route path="/" element={<TrustChainPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
@@ -38,8 +39,8 @@ function App() {
                 <Route path="/blockexplorer" element={<BlockExplorerPage />} />
                 <Route path="/debug" element={<DebugPage />} />
               </Routes>
-            </div>
-            <Toaster position="top-right" />
+              <Toaster position="top-right" />
+            </Layout>
           </Router>
         </RainbowKitProvider>
       </QueryClientProvider>
