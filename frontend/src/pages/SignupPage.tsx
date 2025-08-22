@@ -32,7 +32,7 @@ const SignupPage: React.FC = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
@@ -66,7 +66,7 @@ const SignupPage: React.FC = () => {
       const result = await signup(signupData);
       if (result.meta.requestStatus === 'fulfilled') {
         toast.success('Account created successfully!');
-        navigate('/dashboard');
+        navigate('/');
       }
     } catch (err) {
       toast.error('Signup failed');
