@@ -93,7 +93,7 @@ const NewNavbar: React.FC = () => {
       ref={navbarRef}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-black/80 backdrop-blur-xl border-b border-cyan-500/20 shadow-2xl shadow-cyan-500/10"
+          ? "bg-black backdrop-blur-xl border-b border-cyan-500/20 shadow-2xl "
           : "bg-transparent"
       }`}
     >
@@ -102,12 +102,14 @@ const NewNavbar: React.FC = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center space-x-3 group">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-cyan-500/50 transition-all duration-300 group-hover:scale-110">
-                <span className="text-white font-bold text-lg neon-text">T</span>
-              </div>
-              <span className="text-2xl font-bold gradient-text neon-text group-hover:neon-text-blue transition-all duration-300">
-                TrustChain
-              </span>
+              <img
+                src="/TC22.png"
+                alt="TrustChain Logo"
+                className="h-10 w-10 object-contain"
+              />
+              <span className="text-white text-xl font-bold tracking-wide group-hover:neon-text-cyan-400 transition-all duration-300">TrustChain
+                </span>
+              
             </Link>
           </div>
 

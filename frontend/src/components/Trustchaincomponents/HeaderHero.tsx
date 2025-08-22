@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import CTAButton from "./CTAButton";
 import AuroraBackground from "../AuroraBackground";
+import Aurora from "./aurora";
+import SpotlightCard from './Spotlight';
 
 const HeaderHero = () => {
   const heroRef = useRef<HTMLElement>(null);
@@ -100,106 +102,119 @@ const HeaderHero = () => {
   return (
     <section 
       ref={heroRef}
-      className="relative min-h-screen flex items-center justify-center bg-black overflow-hidden"
+      className="relative min-h-screen flex items-center justify-center  overflow-hidden"
     >
+
+     
+  
+
+  
+
       {/* Aurora Background */}
-      <AuroraBackground />
+      
+  
+
 
       {/* Additional Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/5 via-purple-500/5 to-pink-500/5 animate-pulse"></div>
-      </div>
+      
 
+      
       {/* Floating Elements */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-cyan-500/20 rounded-full floating-element blur-sm"></div>
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/20 rounded-full floating-element blur-sm"></div>
-      <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-pink-500/20 rounded-full floating-element blur-sm"></div>
-      <div className="absolute top-1/3 right-1/4 w-24 h-24 bg-cyan-500/20 rounded-full floating-element blur-sm"></div>
+     
 
-      <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-6xl mx-auto">
-          {/* Badge */}
-          <div 
-            ref={badgeRef}
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 backdrop-blur-sm border border-cyan-500/30 rounded-full text-sm font-medium mb-16 neon-border-cyan-400"
-          >
-            <span className="w-4 h-4 bg-cyan-400 rounded-full mr-4 animate-pulse"></span>
-            <span className="text-cyan-300 neon-text-cyan-400 text-lg">Revolutionizing Government Procurement</span>
-          </div>
+    
+      <div className="absolute inset-0 w-full h-full -z-10">
+  <Aurora
+    colorStops={["#0A2f57", "#b19eef", "#5227ff"]}
+    blend={0.5}
+    amplitude={1.0}
+    speed={0.5}
+  />
+  </div>
+ 
+  <div className="w-full px-6">
+    <div className="text-center mx-auto w-full">
+      {/* Main Heading */}
+      <h1
+        ref={titleRef}
+        className="text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-12 leading-tight break-words whitespace-normal"
+      >
+        {splitText("Revolutionizing", "char")}
+        <br />
+        <span>{splitText("Government Bonds", "char")}</span>
+        <br />
+        <span className="text-purple-500 neon-text-cyan-400 inline-block">
+          {splitText("Bidding with Web3", "char")}
+        </span>
+      </h1>
 
-          {/* Main Heading */}
-          <h1 
-            ref={titleRef}
-            className="text-6xl md:text-8xl lg:text-9xl font-bold text-white mb-12 leading-tight"
-          >
-            {splitText("Revolutionizing ", "char")}
-            <span className="gradient-text neon-text">
-              {splitText("Government Bond", "char")}
-            </span>
-            <br />
-            <span className="text-cyan-400 neon-text-cyan-400">
-              {splitText("Bidding with Web3", "char")}
-            </span>
-          </h1>
+      {/* Subtitle */}
+      <p
+        ref={subtitleRef}
+        className="text-2xl md:text-3xl text-gray-300 mb-20 max-w-5xl mx-auto leading-relaxed"
+      >
+        TrustChain leverages blockchain technology to bring unparalleled{" "}
+        <span className="text-cyan-400 neon-text-cyan-400">transparency</span>,{" "}
+        <span className="text-purple-400 neon-text-purple-400">security</span>, and{" "}
+        <span className="text-pink-400 neon-text-pink-400">efficiency</span> to government bond procurement.
+      </p>
 
-          {/* Subtitle */}
-          <p 
-            ref={subtitleRef}
-            className="text-2xl md:text-3xl text-gray-300 mb-20 max-w-5xl mx-auto leading-relaxed"
-          >
-            TrustChain leverages blockchain technology to bring unparalleled{" "}
-            <span className="text-cyan-400 neon-text-cyan-400">transparency</span>,{" "}
-            <span className="text-purple-400 neon-text-purple-400">security</span>, and{" "}
-            <span className="text-pink-400 neon-text-pink-400">efficiency</span> to government bond procurement.
-          </p>
-
-          {/* CTA Buttons */}
-          <div 
-            ref={buttonsRef}
-            className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-24"
-          >
-            <CTAButton
-              text="Get Started"
-              onClick={() => handleScroll("features")}
-              className="px-12 py-5 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-2xl font-semibold text-xl hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-cyan-500/25 neon-border-cyan-400 transform hover:-translate-y-1"
-            />
-            <CTAButton
-              text="Learn More"
-              onClick={() => handleScroll("about")}
-              className="px-12 py-5 bg-transparent border-2 border-cyan-400 text-cyan-400 rounded-2xl font-semibold text-xl hover:bg-cyan-400/10 hover:neon-text-cyan-400 transition-all duration-300 hover:scale-110 hover:border-cyan-300 transform hover:-translate-y-1"
-            />
-          </div>
-
-          {/* Stats */}
-          <div 
-            ref={statsRef}
-            className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto"
-          >
-            <div className="glass-dark p-10 rounded-3xl text-center border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-500 hover:scale-110 group transform hover:-translate-y-2">
-              <div className="text-6xl font-bold text-cyan-400 mb-6 group-hover:neon-text-cyan-400 transition-all duration-500">100%</div>
-              <div className="text-white font-semibold text-2xl mb-4">Transparency</div>
-              <div className="text-gray-400 text-lg">Complete visibility into all transactions</div>
-            </div>
-            <div className="glass-dark p-10 rounded-3xl text-center border border-purple-500/20 hover:border-purple-500/40 transition-all duration-500 hover:scale-110 group transform hover:-translate-y-2">
-              <div className="text-6xl font-bold text-purple-400 mb-6 group-hover:neon-text-purple-400 transition-all duration-500">0%</div>
-              <div className="text-white font-semibold text-2xl mb-4">Corruption</div>
-              <div className="text-gray-400 text-lg">Eliminated through smart contracts</div>
-            </div>
-            <div className="glass-dark p-10 rounded-3xl text-center border border-pink-500/20 hover:border-pink-500/40 transition-all duration-500 hover:scale-110 group transform hover:-translate-y-2">
-              <div className="text-6xl font-bold text-pink-400 mb-6 group-hover:neon-text-pink-400 transition-all duration-500">24/7</div>
-              <div className="text-white font-semibold text-2xl mb-4">Accessibility</div>
-              <div className="text-gray-400 text-lg">Round-the-clock platform access</div>
-            </div>
-          </div>
-        </div>
+      {/* CTA Buttons */}
+      <div
+        ref={buttonsRef}
+        className="flex flex-col sm:flex-row gap-8 justify-center items-center mb-24"
+      >
+        <CTAButton
+          text="Get Started"
+          onClick={() => handleScroll("features")}
+          className="px-12 py-5 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-2xl font-semibold text-xl hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 hover:scale-110 hover:shadow-2xl hover:shadow-cyan-500/25 neon-border-cyan-400 transform hover:-translate-y-1"
+        />
+        <CTAButton
+          text="Learn More"
+          onClick={() => handleScroll("about")}
+          className="px-12 py-5 bg-transparent border-2 border-cyan-400 text-cyan-400 rounded-2xl font-semibold text-xl hover:bg-cyan-400/10 hover:neon-text-cyan-400 transition-all duration-300 hover:scale-110 hover:border-cyan-300 transform hover:-translate-y-1"
+        />
       </div>
 
-      {/* Scroll Indicator */}
-      <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <div className="w-8 h-12 border-2 border-cyan-400 rounded-full flex justify-center">
-          <div className="w-2 h-4 bg-cyan-400 rounded-full mt-3 animate-pulse"></div>
+      {/* Stats */}
+      <div
+        ref={statsRef}
+        className="grid grid-cols-1 md:grid-cols-3 gap-10 w-full max-w-6xl mx-auto"
+      >
+        <div className="glass-dark p-10 rounded-3xl text-center border border-cyan-500/20 hover:border-cyan-500/40 transition-all duration-500 hover:scale-110 group transform hover:-translate-y-2">
+        <SpotlightCard
+  className="custom-spotlight-card w-full bg-transparent"
+  spotlightColor="rgba(0, 100, 0, 0.4)"
+>
+          <div className="text-6xl font-bold text-cyan-400 mb-6 group-hover:neon-text-cyan-400 transition-all duration-500">100%</div>
+          <div className="text-white font-semibold text-2xl mb-4">Transparency</div>
+          <div className="text-gray-400 text-lg">Complete visibility into all transactions</div>
+          </SpotlightCard>
+        </div>
+        <div className="glass-dark p-10 rounded-3xl text-center border border-purple-500/20 hover:border-purple-500/40 transition-all duration-500 hover:scale-110 group transform hover:-translate-y-2">
+         <SpotlightCard
+  className="custom-spotlight-card w-full bg-transparent"
+  spotlightColor="rgba(42, 42, 110, 0.8)"
+>
+          <div className="text-6xl font-bold text-purple-400 mb-6 group-hover:neon-text-purple-400 transition-all duration-500">0%</div>
+          <div className="text-white font-semibold text-2xl mb-4">Corruption</div>
+          <div className="text-gray-400 text-lg">Eliminated through smart contracts</div>
+          </SpotlightCard>
+        </div>
+        <div className="glass-dark p-10 rounded-3xl text-center border border-pink-500/20 hover:border-pink-500/40 transition-all duration-500 hover:scale-110 group transform hover:-translate-y-2">
+        <SpotlightCard
+  className="custom-spotlight-card w-full bg-transparent"
+  spotlightColor="rgba(150, 0, 0, 0.3)"
+>
+          <div className="text-6xl font-bold text-pink-400 mb-6 group-hover:neon-text-pink-400 transition-all duration-500">24/7</div>
+          <div className="text-white font-semibold text-2xl mb-4">Accessibility</div>
+          <div className="text-gray-400 text-lg">Round-the-clock platform access</div>
+          </SpotlightCard>
         </div>
       </div>
+    </div>
+  </div>
+
     </section>
   );
 };

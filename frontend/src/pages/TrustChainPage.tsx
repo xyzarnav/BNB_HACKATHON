@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import HeaderHero from "../components/Trustchaincomponents/HeaderHero";
 import MainContent from "../components/Trustchaincomponents/MainContent";
-
+import Aurora from "../components/Trustchaincomponents/aurora";
 /**
  * TrustChain Landing Page
  */

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 
+
 const AboutSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -45,22 +46,17 @@ const AboutSection: React.FC = () => {
       className="py-24 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden"
     >
       {/* Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_30%_20%,rgba(0,212,255,0.1),transparent_50%)]"></div>
-        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_70%_80%,rgba(139,92,246,0.1),transparent_50%)]"></div>
-      </div>
+      
 
       <div className="container relative z-10 px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
-          <div className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 backdrop-blur-sm border border-cyan-500/30 rounded-full text-sm font-medium mb-8 neon-border-cyan-400">
-            <span className="text-cyan-300 neon-text-cyan-400">About TrustChain</span>
-          </div>
+          
           <h2 
             ref={titleRef}
             className="text-5xl md:text-6xl font-bold text-white mb-8"
           >
-            Powering{" "}
-            <span className="gradient-text neon-text">Trust</span>{" "}
+            Powering Trust{" "}
+            <span className="gradient-text neon-text"></span>{" "}
             with Technology
           </h2>
           <p className="text-2xl text-gray-300 max-w-4xl mx-auto">
@@ -160,6 +156,7 @@ const AboutSection: React.FC = () => {
           </div>
         </div>
       </div>
+     
     </section>
   );
 };

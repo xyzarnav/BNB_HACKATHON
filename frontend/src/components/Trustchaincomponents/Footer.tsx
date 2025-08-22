@@ -32,13 +32,15 @@ const Footer: React.FC = () => {
           {/* Brand Section */}
           <div className="col-span-1">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/25">
-                <span className="text-white font-bold text-lg neon-text">T</span>
-              </div>
-              <span className="text-2xl font-bold gradient-text neon-text">
-                TrustChain
-              </span>
-            </div>
+  <img
+    src="/TC22.png"
+    alt="TrustChain Logo"
+    className="w-10 h-10 object-contain"
+  />
+  <span className="font-bold">TrustChain</span>
+
+</div>
+
             <p className="text-gray-400 mb-8 text-sm leading-relaxed">
               Revolutionizing government project management with blockchain technology. 
               Ensuring transparency, efficiency, and accountability in every transaction.
