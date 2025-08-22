@@ -17,7 +17,7 @@ const CTAButton: React.FC<CTAButtonProps> = ({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`${className} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed`}
+      className={`${className} focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-black disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 transform hover:scale-105 active:scale-95`}
     >
       {text}
     </button>

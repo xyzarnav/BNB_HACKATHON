@@ -1,126 +1,212 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
-import { useAuth } from "../../hooks/useAuth";
-import { toast } from "react-hot-toast";
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { gsap } from "gsap";
 
 const NewNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProjectsDropdownOpen, setIsProjectsDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  
+  const navbarRef = useRef<HTMLElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      // Logout is always considered successful since we clean up local state
-      toast.success("Logged out successfully");
-      navigate("/signup");
-    } catch (error) {
-      // This should rarely happen, but just in case
-      console.error('Logout error:', error);
-      // Still navigate to signup since we've cleaned up the state
-      navigate("/signup");
-    }
+  // Dummy login/logout logic for demonstration
+  const handleLogin = () => {
+    navigate("/login");
   };
+
+  const handleLogout = () => setIsLoggedIn(false);
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 10);
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Common navigation items for all users
-  const commonNavigation = [
+  // GSAP Animations
+  useEffect(() => {
+    if (navbarRef.current) {
+      gsap.fromTo(navbarRef.current, 
+        { y: -100, opacity: 0 },
+        { y: 0, opacity: 1, duration: 1, ease: "power3.out" }
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    if (dropdownRef.current) {
+      if (isProjectsDropdownOpen) {
+        gsap.fromTo(dropdownRef.current,
+          { opacity: 0, y: -20, scale: 0.95 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "back.out(1.7)" }
+        );
+      } else {
+        gsap.to(dropdownRef.current, {
+          opacity: 0, y: -20, scale: 0.95, duration: 0.2, ease: "power2.in"
+        });
+      }
+    }
+  }, [isProjectsDropdownOpen]);
+
+  useEffect(() => {
+    if (mobileMenuRef.current) {
+      if (isMobileMenuOpen) {
+        gsap.fromTo(mobileMenuRef.current,
+          { opacity: 0, x: -300 },
+          { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }
+        );
+      } else {
+        gsap.to(mobileMenuRef.current, {
+          opacity: 0, x: -300, duration: 0.3, ease: "power2.in"
+        });
+      }
+    }
+  }, [isMobileMenuOpen]);
+
+  const navigation = [
     { name: "Home", href: "/" },
-    { name: "Projects", href: "/projects" },
+    { name: "Dashboard", href: "/dashboard" },
     { name: "Use Cases", href: "/usecases" },
     { name: "Block Explorer", href: "/blockexplorer" },
     { name: "Profile", href: "/profile" },
     { name: "Contact", href: "/contact" },
   ];
 
-  // Role-specific navigation items
-  const roleBasedNavigation = user ? (
-    user.role === 'bidder' ? [
-      { name: "My Bids", href: "/dashboard/my-bids" },
-      { name: "Participate in Bids", href: "/projects" },
-    ] : user.role === 'bond_issuer' ? [
-      { name: "My Projects", href: "/dashboard/my-projects" },
-      { name: "Create Project", href: "/dashboard/create-project" },
-    ] : user.role === 'auditor' ? [
-      { name: "Audit Dashboard", href: "/dashboard/audit" },
-    ] : []
-  ) : [];
-
-  const navigation = [...commonNavigation, ...roleBasedNavigation];
+  const projectsMenuItems = [
+    { name: "All Projects", href: "/projects", icon: "📋" },
+    { name: "My Projects", href: "/dashboard/my-projects", icon: "📁" },
+    { name: "Create Project", href: "/dashboard/create-project", icon: "➕" },
+  ];
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      ref={navbarRef}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
         isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200"
+          ? "bg-black/80 backdrop-blur-xl border-b border-cyan-500/20 shadow-2xl shadow-cyan-500/10"
           : "bg-transparent"
       }`}
     >
-      <div className="container">
-        <div className="flex items-center justify-between h-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold text-sm">T</span>
-            </div>
-            <span className="text-xl font-bold text-gradient">TrustChain</span>
-          </Link>
+          <div className="flex-shrink-0">
+            <Link to="/" className="flex items-center space-x-3 group">
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-cyan-500/50 transition-all duration-300 group-hover:scale-110">
+                <span className="text-white font-bold text-lg neon-text">T</span>
+              </div>
+              <span className="text-2xl font-bold gradient-text neon-text group-hover:neon-text-blue transition-all duration-300">
+                TrustChain
+              </span>
+            </Link>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
-            {navigation.map((item) => (
+            {navigation.map((item, index) => (
               <Link
                 key={item.name}
                 to={item.href}
-                className="text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+                className="text-gray-300 hover:text-cyan-400 font-medium transition-all duration-300 hover:neon-text-cyan-400 relative group"
+                style={{ animationDelay: `${index * 0.1}s` }}
               >
                 {item.name}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-cyan-400 to-purple-600 group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
+            
+            {/* Projects Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsProjectsDropdownOpen(!isProjectsDropdownOpen)}
+                className="text-gray-300 hover:text-cyan-400 font-medium transition-all duration-300 hover:neon-text-cyan-400 flex items-center space-x-1 group"
+              >
+                <span>Projects</span>
+                <svg 
+                  className={`w-4 h-4 transition-transform duration-300 ${isProjectsDropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+              
+              {/* Dropdown Menu */}
+              {isProjectsDropdownOpen && (
+                <div
+                  ref={dropdownRef}
+                  className="absolute top-full left-0 mt-2 w-64 bg-black/90 backdrop-blur-xl border border-cyan-500/20 rounded-xl shadow-2xl shadow-cyan-500/20 overflow-hidden"
+                >
+                  <div className="p-2">
+                    {projectsMenuItems.map((item, index) => (
+                      <Link
+                        key={item.name}
+                        to={item.href}
+                        className="flex items-center space-x-3 px-4 py-3 text-gray-300 hover:text-white hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-purple-500/10 rounded-lg transition-all duration-300 group"
+                        onClick={() => setIsProjectsDropdownOpen(false)}
+                        style={{ animationDelay: `${index * 0.05}s` }}
+                      >
+                        <span className="text-lg">{item.icon}</span>
+                        <span className="font-medium group-hover:neon-text-cyan-400 transition-all duration-300">
+                          {item.name}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Desktop Connect Wallet and Logout */}
+          {/* Desktop Auth Buttons */}
           <div className="hidden lg:flex items-center space-x-4">
-            <ConnectButton />
-            {user && (
+            {!isLoggedIn ? (
               <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                onClick={handleLogin}
+                className="px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-xl font-medium hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-105 neon-border-cyan-400"
               >
-                Logout
+                Login
               </button>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <span className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium neon-text-green">
+                  Connect Wallet
+                </span>
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-gray-800 text-gray-300 rounded-lg font-medium hover:bg-gray-700 hover:text-white transition-all duration-300 hover:neon-text-gray-300"
+                >
+                  Logout
+                </button>
+              </div>
             )}
           </div>
 
           {/* Mobile menu button */}
-          <div className="lg:hidden flex items-center space-x-4">
-            <ConnectButton />
-            {user && (
+          <div className="lg:hidden flex items-center space-x-3">
+            {!isLoggedIn ? (
               <button
-                onClick={handleLogout}
-                className="p-2 text-red-600 hover:text-red-700"
-                title="Logout"
+                onClick={handleLogin}
+                className="px-4 py-2 bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-lg font-medium text-sm hover:from-cyan-400 hover:to-purple-500 transition-all duration-300"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
+                Login
               </button>
+            ) : (
+              <span className="px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg font-medium text-xs">
+                Wallet
+              </span>
             )}
+            
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-200"
-              title={isMobileMenuOpen ? "Close menu" : "Open menu"}
-              aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+              className="p-2 rounded-lg text-gray-300 hover:text-cyan-400 hover:bg-gray-800 transition-all duration-300"
             >
               <svg
                 className="w-6 h-6"
@@ -150,29 +236,37 @@ const NewNavbar: React.FC = () => {
 
         {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-white border-t border-gray-200 py-4">
-            <div className="space-y-4">
+          <div
+            ref={mobileMenuRef}
+            className="lg:hidden bg-black/95 backdrop-blur-xl border-t border-cyan-500/20 py-6 mt-0"
+          >
+            <div className="space-y-2 px-4">
               {navigation.map((item) => (
                 <Link
                   key={item.name}
                   to={item.href}
-                  className="block px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+                  className="block px-4 py-3 text-gray-300 hover:text-cyan-400 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-purple-500/10 rounded-lg transition-all duration-300 hover:neon-text-cyan-400"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.name}
                 </Link>
               ))}
-              {user && (
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="block w-full text-left px-4 py-2 text-red-600 hover:text-red-700 hover:bg-gray-50 rounded-lg transition-colors duration-200"
-                >
-                  Logout
-                </button>
-              )}
+              
+              {/* Mobile Projects Menu */}
+              <div className="border-t border-cyan-500/20 pt-4 mt-4">
+                <div className="px-4 py-2 text-cyan-400 font-medium text-sm">Projects</div>
+                {projectsMenuItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className="block px-4 py-3 text-gray-300 hover:text-cyan-400 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-purple-500/10 rounded-lg transition-all duration-300 flex items-center space-x-3"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <span className="text-lg">{item.icon}</span>
+                    <span>{item.name}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -182,4 +276,3 @@ const NewNavbar: React.FC = () => {
 };
 
 export default NewNavbar;
-

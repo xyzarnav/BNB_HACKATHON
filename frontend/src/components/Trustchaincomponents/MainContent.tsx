@@ -5,7 +5,7 @@ import UseCasesSection from "./UsecaseSection";
 
 const MainContent: React.FC = () => {
   return (
-    <main className="bg-white">
+    <main className="bg-black">
       {/* About Section */}
       <AboutSection />
       

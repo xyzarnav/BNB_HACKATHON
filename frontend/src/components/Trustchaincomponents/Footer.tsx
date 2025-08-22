@@ -26,16 +26,16 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="bg-gray-900 text-white mt-auto">
+    <footer className="bg-black/50 backdrop-blur-xl border-t border-cyan-500/20 text-white mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
           {/* Brand Section */}
           <div className="col-span-1">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-lg">
-                <span className="text-white font-bold text-lg">T</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-cyan-500/25">
+                <span className="text-white font-bold text-lg neon-text">T</span>
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold gradient-text neon-text">
                 TrustChain
               </span>
             </div>
@@ -46,7 +46,7 @@ const Footer: React.FC = () => {
             <div className="flex space-x-4">
               <a 
                 href="#" 
-                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 transition-all duration-200 hover:scale-105"
+                className="w-10 h-10 bg-gray-800/50 backdrop-blur-sm rounded-xl flex items-center justify-center text-gray-400 hover:text-cyan-400 hover:bg-cyan-500/10 hover:neon-text-cyan-400 transition-all duration-300 hover:scale-110 border border-gray-700/50 hover:border-cyan-500/50"
                 aria-label="Twitter"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -55,7 +55,7 @@ const Footer: React.FC = () => {
               </a>
               <a 
                 href="#" 
-                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 transition-all duration-200 hover:scale-105"
+                className="w-10 h-10 bg-gray-800/50 backdrop-blur-sm rounded-xl flex items-center justify-center text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 hover:neon-text-purple-400 transition-all duration-300 hover:scale-110 border border-gray-700/50 hover:border-purple-500/50"
                 aria-label="GitHub"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@ const Footer: React.FC = () => {
               </a>
               <a 
                 href="#" 
-                className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center text-gray-400 hover:text-white hover:bg-gray-700 transition-all duration-200 hover:scale-105"
+                className="w-10 h-10 bg-gray-800/50 backdrop-blur-sm rounded-xl flex items-center justify-center text-gray-400 hover:text-pink-400 hover:bg-pink-500/10 hover:neon-text-pink-400 transition-all duration-300 hover:scale-110 border border-gray-700/50 hover:border-pink-500/50"
                 aria-label="LinkedIn"
               >
                 <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
@@ -77,7 +77,7 @@ const Footer: React.FC = () => {
           {/* Links Sections */}
           {Object.entries(footerLinks).map(([section, links]) => (
             <div key={section} className="col-span-1">
-              <h3 className="text-sm font-bold text-gray-300 tracking-wider uppercase mb-4">
+              <h3 className="text-sm font-bold text-cyan-400 tracking-wider uppercase mb-4 neon-text-cyan-400">
                 {section.charAt(0).toUpperCase() + section.slice(1)}
               </h3>
               <ul className="space-y-3">
@@ -85,7 +85,7 @@ const Footer: React.FC = () => {
                   <li key={link.name}>
                     <Link
                       to={link.href}
-                      className="text-gray-400 hover:text-white text-sm transition-colors duration-200 hover:translate-x-1 inline-block"
+                      className="text-gray-400 hover:text-cyan-400 text-sm transition-all duration-300 hover:translate-x-1 inline-block hover:neon-text-cyan-400"
                     >
                       {link.name}
                     </Link>
@@ -97,7 +97,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="mt-12 pt-8 border-t border-gray-800">
+        <div className="mt-12 pt-8 border-t border-cyan-500/20">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-gray-400 text-sm">
               © {currentYear} TrustChain. All rights reserved.
@@ -105,13 +105,13 @@ const Footer: React.FC = () => {
             <div className="flex space-x-8">
               <Link 
                 to="/privacy" 
-                className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
+                className="text-gray-400 hover:text-cyan-400 text-sm transition-all duration-300 hover:neon-text-cyan-400"
               >
                 Privacy Policy
               </Link>
               <Link 
                 to="/terms" 
-                className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
+                className="text-gray-400 hover:text-cyan-400 text-sm transition-all duration-300 hover:neon-text-cyan-400"
               >
                 Terms of Service
               </Link>
