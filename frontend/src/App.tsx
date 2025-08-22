@@ -22,6 +22,8 @@ import DebugPage from './pages/DebugPage';
 import ActiveProjectsPage from './pages/ActiveProjectsPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import AuditDashboardPage from './pages/AuditDashboardPage';
+import ProjectsListPage from './pages/ProjectsListPage';
 import '@rainbow-me/rainbowkit/styles.css';
 import './App.css';
 
@@ -49,22 +51,50 @@ function App() {
                     </ProtectedRoute>
                   } />
                   
-                  <Route path="/dashboard" element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <DashboardPage />
-                      </Layout>
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="/active-projects" element={
-                    <ProtectedRoute>
+                  {/* Bidder Routes */}
+                  <Route path="/dashboard/my-bids" element={
+                    <ProtectedRoute allowedRoles={['bidder']}>
                       <Layout>
                         <ActiveProjectsPage />
                       </Layout>
                     </ProtectedRoute>
                   } />
-                  
+
+                  {/* Bond Issuer Routes */}
+                  <Route path="/dashboard/my-projects" element={
+                    <ProtectedRoute allowedRoles={['bond_issuer']}>
+                      <Layout>
+                        <DashboardPage />
+                      </Layout>
+                    </ProtectedRoute>
+                  } />
+
+                  <Route path="/dashboard/create-project" element={
+                    <ProtectedRoute allowedRoles={['bond_issuer']}>
+                      <Layout>
+                        <CreateProjectPage />
+                      </Layout>
+                    </ProtectedRoute>
+                  } />
+
+                  {/* Auditor Routes */}
+                  <Route path="/dashboard/audit" element={
+                    <ProtectedRoute allowedRoles={['auditor']}>
+                      <Layout>
+                        <AuditDashboardPage />
+                      </Layout>
+                    </ProtectedRoute>
+                  } />
+
+                  {/* Common Protected Routes */}
+                  <Route path="/projects" element={
+                    <ProtectedRoute>
+                      <Layout>
+                        <ProjectsListPage />
+                      </Layout>
+                    </ProtectedRoute>
+                  } />
+
                   <Route path="/project/:projectId" element={
                     <ProtectedRoute>
                       <Layout>
@@ -72,15 +102,7 @@ function App() {
                       </Layout>
                     </ProtectedRoute>
                   } />
-                  
-                  <Route path="/create-project" element={
-                    <ProtectedRoute allowedRoles={['bond_issuer']}>
-                      <Layout>
-                        <CreateProjectPage />
-                      </Layout>
-                    </ProtectedRoute>
-                  } />
-                  
+
                   <Route path="/bid/:projectId" element={
                     <ProtectedRoute allowedRoles={['bidder']}>
                       <Layout>

@@ -8,10 +8,10 @@ const ProjectPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
   const { address } = useAccount();
-  const parsedProjectId = projectId ? parseInt(projectId) : 0;
-  const { data: project, isLoading } = useProjectById(parsedProjectId);
+  const parsedProjectId = projectId ? parseInt(projectId) : null;
+  const { data: project, isLoading } = useProjectById(parsedProjectId || 0);
 
-  if (!parsedProjectId) {
+  if (parsedProjectId === null) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -22,11 +22,11 @@ const ProjectPage: React.FC = () => {
             Unable to load project details. Please check the URL and try again.
           </p>
           <button
-            onClick={() => navigate("/active-projects")}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            ← Back to Projects
-          </button>
+                          onClick={() => navigate("/projects")}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              ← Back to Projects
+            </button>
         </div>
       </div>
     );
@@ -61,7 +61,7 @@ const ProjectPage: React.FC = () => {
               Back to Dashboard
             </button>
             <button
-              onClick={() => navigate("/active-projects")}
+              onClick={() => navigate("/projects")}
               className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
             >
               View All Projects
@@ -78,7 +78,7 @@ const ProjectPage: React.FC = () => {
         <div className="mb-8 flex items-center justify-between">
           <div>
             <button
-              onClick={() => navigate("/active-projects")}
+              onClick={() => navigate("/projects")}
               className="text-blue-600 hover:text-blue-700 flex items-center"
             >
               ← Back to Projects

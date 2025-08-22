@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { useAuth } from "../../hooks/useAuth";
 
 const NewNavbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { user } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -15,14 +17,30 @@ const NewNavbar: React.FC = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navigation = [
+  // Common navigation items for all users
+  const commonNavigation = [
     { name: "Home", href: "/" },
-    { name: "Dashboard", href: "/dashboard" },
+    { name: "Projects", href: "/projects" },
     { name: "Use Cases", href: "/usecases" },
     { name: "Block Explorer", href: "/blockexplorer" },
     { name: "Profile", href: "/profile" },
     { name: "Contact", href: "/contact" },
   ];
+
+  // Role-specific navigation items
+  const roleBasedNavigation = user ? (
+    user.role === 'bidder' ? [
+      { name: "My Bids", href: "/dashboard/my-bids" },
+      { name: "Participate in Bids", href: "/projects" },
+    ] : user.role === 'bond_issuer' ? [
+      { name: "My Projects", href: "/dashboard/my-projects" },
+      { name: "Create Project", href: "/dashboard/create-project" },
+    ] : user.role === 'auditor' ? [
+      { name: "Audit Dashboard", href: "/dashboard/audit" },
+    ] : []
+  ) : [];
+
+  const navigation = [...commonNavigation, ...roleBasedNavigation];
 
   return (
     <nav
