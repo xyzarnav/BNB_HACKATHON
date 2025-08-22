@@ -2,8 +2,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAccount, useWriteContract } from "wagmi";
 import { deployedContracts } from "../contracts/deployedContracts";
-import NewNavbar from "../components/Trustchaincomponents/NewNavbar";
 import { toast } from "react-hot-toast";
+
+// Enum to match the smart contract's ProjectClassification
+enum ProjectClassification {
+  MaxRate = 0,
+  FixRate = 1,
+  MinRate = 2
+}
 
 const CreateProjectPage: React.FC = () => {
   const navigate = useNavigate();
@@ -13,10 +19,9 @@ const CreateProjectPage: React.FC = () => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
+    timePeriod: "", // in seconds
     budget: "",
-    deadline: "",
-    category: "infrastructure",
-    requirements: "",
+    projectType: ProjectClassification.FixRate,
   });
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -35,17 +40,17 @@ const CreateProjectPage: React.FC = () => {
       return;
     }
 
-    if (!formData.title || !formData.description || !formData.budget || !formData.deadline) {
+    if (!formData.title || !formData.description || !formData.budget || !formData.timePeriod) {
       toast.error("Please fill in all required fields");
       return;
     }
 
     try {
-      // Convert budget to wei (assuming BNB has 18 decimals)
-      const budgetInWei = (parseFloat(formData.budget) * 10 ** 18).toString();
+      // Convert budget to wei
+      const budgetInWei = BigInt(parseFloat(formData.budget) * 10 ** 18);
       
-      // Convert deadline to timestamp
-      const deadlineTimestamp = Math.floor(new Date(formData.deadline).getTime() / 1000);
+      // Convert time period to seconds
+      const timePeriodInSeconds = parseInt(formData.timePeriod) * 24 * 60 * 60; // Convert days to seconds
 
       writeContract({
         address: deployedContracts.TrustChain.address as `0x${string}`,
@@ -54,10 +59,9 @@ const CreateProjectPage: React.FC = () => {
         args: [
           formData.title,
           formData.description,
+          BigInt(timePeriodInSeconds),
           budgetInWei,
-          deadlineTimestamp,
-          formData.category,
-          formData.requirements
+          parseInt(formData.projectType.toString())
         ],
       });
 
@@ -71,8 +75,7 @@ const CreateProjectPage: React.FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <NewNavbar />
+      <Layout>
         <div className="pt-20">
           <div className="container py-16">
             <div className="text-center">
@@ -91,13 +94,12 @@ const CreateProjectPage: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Layout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NewNavbar />
+    <Layout>
       <div className="pt-20">
         <div className="container py-16">
           <div className="max-w-4xl mx-auto">
@@ -110,45 +112,22 @@ const CreateProjectPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="card p-8">
+            <div className="bg-white rounded-xl shadow-lg p-8">
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
-                      Project Title *
-                    </label>
-                    <input
-                      type="text"
-                      id="title"
-                      name="title"
-                      value={formData.title}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      placeholder="Enter project title"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-2">
-                      Category *
-                    </label>
-                    <select
-                      id="category"
-                      name="category"
-                      value={formData.category}
-                      onChange={handleInputChange}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      required
-                    >
-                      <option value="infrastructure">Infrastructure</option>
-                      <option value="healthcare">Healthcare</option>
-                      <option value="education">Education</option>
-                      <option value="technology">Technology</option>
-                      <option value="environment">Environment</option>
-                      <option value="transportation">Transportation</option>
-                    </select>
-                  </div>
+                <div>
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
+                    Project Title *
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="Enter project title"
+                    required
+                  />
                 </div>
 
                 <div>
@@ -167,7 +146,7 @@ const CreateProjectPage: React.FC = () => {
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
                     <label htmlFor="budget" className="block text-sm font-medium text-gray-700 mb-2">
                       Budget (BNB) *
@@ -187,48 +166,53 @@ const CreateProjectPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label htmlFor="deadline" className="block text-sm font-medium text-gray-700 mb-2">
-                      Deadline *
+                    <label htmlFor="timePeriod" className="block text-sm font-medium text-gray-700 mb-2">
+                      Time Period (Days) *
                     </label>
                     <input
-                      type="date"
-                      id="deadline"
-                      name="deadline"
-                      value={formData.deadline}
+                      type="number"
+                      id="timePeriod"
+                      name="timePeriod"
+                      value={formData.timePeriod}
                       onChange={handleInputChange}
+                      min="1"
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Enter number of days"
                       required
                     />
                   </div>
-                </div>
 
-                <div>
-                  <label htmlFor="requirements" className="block text-sm font-medium text-gray-700 mb-2">
-                    Requirements & Specifications
-                  </label>
-                  <textarea
-                    id="requirements"
-                    name="requirements"
-                    value={formData.requirements}
-                    onChange={handleInputChange}
-                    rows={4}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    placeholder="List project requirements, qualifications, and specifications"
-                  />
+                  <div>
+                    <label htmlFor="projectType" className="block text-sm font-medium text-gray-700 mb-2">
+                      Project Type *
+                    </label>
+                    <select
+                      id="projectType"
+                      name="projectType"
+                      value={formData.projectType}
+                      onChange={handleInputChange}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    >
+                      <option value={ProjectClassification.MaxRate}>Max Rate (Highest Bid Wins)</option>
+                      <option value={ProjectClassification.FixRate}>Fix Rate (Fixed Budget)</option>
+                      <option value={ProjectClassification.MinRate}>Min Rate (Lowest Bid Wins)</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className="flex justify-end space-x-4 pt-6">
                   <button
                     type="button"
                     onClick={() => navigate("/dashboard")}
-                    className="btn btn-ghost"
+                    className="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isPending}
-                    className="btn btn-primary"
+                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:bg-blue-400"
                   >
                     {isPending ? "Creating Project..." : "Create Project"}
                   </button>
@@ -238,9 +222,8 @@ const CreateProjectPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 
 export default CreateProjectPage;
-

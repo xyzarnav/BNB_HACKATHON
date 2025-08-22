@@ -1,4 +1,5 @@
 import React from 'react';
+import NewNavbar from './Trustchaincomponents/NewNavbar';
 import Footer from './Trustchaincomponents/Footer';
 
 interface LayoutProps {
@@ -8,7 +9,8 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex flex-col">
-      <main className="flex-grow">
+      <NewNavbar />
+      <main className="flex-grow pt-16">
         {children}
       </main>
       <Footer />

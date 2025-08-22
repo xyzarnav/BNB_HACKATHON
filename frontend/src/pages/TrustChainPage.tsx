@@ -1,5 +1,4 @@
 import React from "react";
-import NewNavbar from "../components/Trustchaincomponents/NewNavbar";
 import HeaderHero from "../components/Trustchaincomponents/HeaderHero";
 import MainContent from "../components/Trustchaincomponents/MainContent";
 
@@ -8,10 +7,7 @@ import MainContent from "../components/Trustchaincomponents/MainContent";
  */
 const TrustchainPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white">
-      {/* Navigation */}
-      <NewNavbar />
-
+    <div className="bg-white">
       {/* Hero Section */}
       <HeaderHero />
 

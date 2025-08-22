@@ -1,11 +1,9 @@
 import React from "react";
-import NewNavbar from "../components/Trustchaincomponents/NewNavbar";
 
 const ContactPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-white">
-      <NewNavbar />
-      <div className="pt-20">
+    <div className="bg-white py-8">
+      <div>
         <div className="container py-16">
           <div className="text-center mb-16">
             <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-medium mb-6">

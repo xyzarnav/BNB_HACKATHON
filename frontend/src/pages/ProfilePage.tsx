@@ -1,5 +1,4 @@
 import React from 'react';
-import NewNavbar from '../components/Trustchaincomponents/NewNavbar';
 import UserInfo from '../components/Trustchaincomponents/PageComponents/UserInfo';
 import { useAccount } from 'wagmi';
 
@@ -8,10 +7,9 @@ const ProfilePage: React.FC = () => {
 
   if (!isConnected) {
     return (
-      <div className="min-h-screen bg-white">
-        <NewNavbar />
-        <div className="container mx-auto px-4 py-16 text-center">
-          <div className="bg-blue-50 rounded-xl p-8 max-w-2xl mx-auto mt-16">
+      <div className="bg-white py-16">
+        <div className="container mx-auto px-4 text-center">
+          <div className="bg-blue-50 rounded-xl p-8 max-w-2xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-800 mb-4">Connect Your Wallet</h2>
             <p className="text-gray-600">
               Please connect your wallet to view your profile and manage your projects and bids.
@@ -23,13 +21,10 @@ const ProfilePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NewNavbar />
+    <div className="bg-gray-50 py-8">
       <div className="container mx-auto px-4">
-        <div className="pt-16">
-          <h1 className="text-3xl font-bold text-gray-800 mt-8 mb-6 text-center">Your Profile</h1>
-          <UserInfo />
-        </div>
+        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Your Profile</h1>
+        <UserInfo />
       </div>
     </div>
   );

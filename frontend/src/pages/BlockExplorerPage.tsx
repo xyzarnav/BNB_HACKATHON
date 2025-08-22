@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import NewNavbar from '../components/Trustchaincomponents/NewNavbar';
 import { useReadContract } from 'wagmi';
 import { deployedContracts } from '../contracts/deployedContracts';
 
@@ -23,11 +22,9 @@ const BlockExplorerPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      <NewNavbar />
-      
+    <div className="bg-white">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-b from-blue-50 to-white py-10 mt-16">
+      <div className="relative bg-gradient-to-b from-blue-50 to-white py-10">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-bold text-gray-800 mb-4">

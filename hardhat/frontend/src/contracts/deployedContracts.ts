@@ -2,7 +2,7 @@
 // Auto-generated file - do not edit manually
 export const deployedContracts = {
   "TrustChain": {
-    "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+    "address": "0x3a479b0c6fAc1F2908F5302CeaA23C126295Dba1",
     "abi": [
       {
         "type": "constructor",

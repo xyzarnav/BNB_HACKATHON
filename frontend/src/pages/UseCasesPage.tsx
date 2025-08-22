@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import NewNavbar from "../components/Trustchaincomponents/NewNavbar";
 
 const UseCasesPage = () => {
   const useCases = [
@@ -43,8 +42,8 @@ const UseCasesPage = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
-      <NewNavbar />
+    <div className="bg-white py-8">
+      
       {/* Hero Section */}
       <div className="relative bg-gradient-to-b from-blue-50 to-white py-10 mt-10">
         <div className="absolute inset-0 bg-[size:60px_60px] opacity-5 bg-grid"></div>

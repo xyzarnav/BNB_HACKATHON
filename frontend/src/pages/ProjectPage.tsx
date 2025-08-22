@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAccount, useReadContract } from "wagmi";
 import { deployedContracts } from "../contracts/deployedContracts";
-import NewNavbar from "../components/Trustchaincomponents/NewNavbar";
 import { Link } from "react-router-dom";
 
 interface Project {
@@ -87,8 +86,8 @@ const ProjectPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <NewNavbar />
+      <div className="bg-gray-50 py-8">
+        
         <div className="pt-20">
           <div className="container py-16">
             <div className="text-center">
@@ -103,8 +102,8 @@ const ProjectPage: React.FC = () => {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <NewNavbar />
+      <div className="bg-gray-50 py-8">
+        
         <div className="pt-20">
           <div className="container py-16">
             <div className="text-center">
@@ -128,8 +127,8 @@ const ProjectPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <NewNavbar />
+    <div className="bg-gray-50 py-8">
+      
       <div className="pt-20">
         <div className="container py-16">
           <div className="max-w-6xl mx-auto">

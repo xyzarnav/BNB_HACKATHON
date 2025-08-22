@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useAccount, useWriteContract, useReadContract } from "wagmi";
 import { deployedContracts } from "../contracts/deployedContracts";
-import NewNavbar from "../components/Trustchaincomponents/NewNavbar";
 import { toast } from "react-hot-toast";
 
 interface Project {
@@ -95,7 +94,7 @@ const BidPage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <NewNavbar />
+        
         <div className="pt-20">
           <div className="container py-16">
             <div className="text-center">
@@ -111,7 +110,7 @@ const BidPage: React.FC = () => {
   if (!project) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <NewNavbar />
+        
         <div className="pt-20">
           <div className="container py-16">
             <div className="text-center">
@@ -137,7 +136,7 @@ const BidPage: React.FC = () => {
   if (!isConnected) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <NewNavbar />
+        
         <div className="pt-20">
           <div className="container py-16">
             <div className="text-center">
@@ -162,7 +161,7 @@ const BidPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <NewNavbar />
+      
       <div className="pt-20">
         <div className="container py-16">
           <div className="max-w-4xl mx-auto">
