@@ -1,12 +1,182 @@
 // Auto-generated file - do not edit manually
 export const deployedContracts = {
   "TrustChain": {
-    "address": "0x490e75BcA322d927CC5a9ff9e2ACE91aa8c3e7D0",
+    "address": "0x5E45093075f938c49ac111dCfCC1e61670aC029f",
     "abi": [
       {
         "inputs": [],
         "stateMutability": "nonpayable",
         "type": "constructor"
+      },
+      {
+        "inputs": [],
+        "name": "AddressBlacklisted",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "AlreadyBidded",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "AuditorAlreadyAssigned",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "AuditorNotRegistered",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "BidAlreadyEvaluated",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "BidDoesNotExist",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "BidNotEvaluated",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "BidderAlreadyExists",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "BidderBlacklisted",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "BidderDoesNotExist",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "BondDoesNotExist",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "CreatorCannotBid",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "DisputeAlreadyResolved",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "EmptyDescription",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "EmptyTitle",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidAmount",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidBidId",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidBudget",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidCompletionStatus",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidMilestone",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidProjectId",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidRiskScore",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "InvalidTimePeriod",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "MediatorAlreadyAssigned",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "MilestoneNotApproved",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "MustSendFullAmount",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "NoAuditorsAvailable",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "NoBidsAvailable",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "NoLowRiskBidsAvailable",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "OnlyAuditorCanApprove",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "OnlyCreatorCanAward",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "OnlyCreatorCanRelease",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "OnlyCreatorOrObligorCanDispute",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "OnlyMediatorCanResolve",
+        "type": "error"
       },
       {
         "inputs": [
@@ -32,7 +202,42 @@ export const deployedContracts = {
       },
       {
         "inputs": [],
+        "name": "ProjectAlreadyCompleted",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "ProjectDisputed",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "ProjectDoesNotExist",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "ProjectLate",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "ProjectNotApproved",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "ProjectNotPosted",
+        "type": "error"
+      },
+      {
+        "inputs": [],
         "name": "ReentrancyGuardReentrantCall",
+        "type": "error"
+      },
+      {
+        "inputs": [],
+        "name": "SelectedBidderBlacklisted",
         "type": "error"
       },
       {
@@ -179,6 +384,31 @@ export const deployedContracts = {
           {
             "indexed": true,
             "internalType": "uint256",
+            "name": "bidId",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "recommendation",
+            "type": "string"
+          },
+          {
+            "indexed": false,
+            "internalType": "bool",
+            "name": "approved",
+            "type": "bool"
+          }
+        ],
+        "name": "MLRecommendationUpdated",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "uint256",
             "name": "disputeId",
             "type": "uint256"
           },
@@ -265,6 +495,37 @@ export const deployedContracts = {
           }
         ],
         "name": "ProjectCreated",
+        "type": "event"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": true,
+            "internalType": "uint256",
+            "name": "bidId",
+            "type": "uint256"
+          },
+          {
+            "indexed": true,
+            "internalType": "address",
+            "name": "bidder",
+            "type": "address"
+          },
+          {
+            "indexed": false,
+            "internalType": "uint256",
+            "name": "riskScore",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "internalType": "string",
+            "name": "riskCategory",
+            "type": "string"
+          }
+        ],
+        "name": "RiskAssessmentSubmitted",
         "type": "event"
       },
       {
@@ -449,6 +710,92 @@ export const deployedContracts = {
         "type": "function"
       },
       {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_projectId",
+            "type": "uint256"
+          }
+        ],
+        "name": "bidEvaluationWithML",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "bidRiskAssessments",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "bidId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "bidder",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "riskScore",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "riskCategory",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "recommendation",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "approved",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "mlModelVersion",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "name": "bidderAverageRisk",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [],
         "name": "bidderCount",
         "outputs": [
@@ -470,6 +817,30 @@ export const deployedContracts = {
           }
         ],
         "name": "bidderIds",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "name": "bidderRiskHistory",
         "outputs": [
           {
             "internalType": "uint256",
@@ -918,6 +1289,44 @@ export const deployedContracts = {
             "type": "address"
           }
         ],
+        "name": "getBidderAverageRisk",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_bidder",
+            "type": "address"
+          }
+        ],
+        "name": "getBidderRiskHistory",
+        "outputs": [
+          {
+            "internalType": "uint256[]",
+            "name": "",
+            "type": "uint256[]"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "_bidder",
+            "type": "address"
+          }
+        ],
         "name": "getBidsByUser",
         "outputs": [
           {
@@ -956,6 +1365,82 @@ export const deployedContracts = {
             "internalType": "struct TrustChain.Bid[]",
             "name": "",
             "type": "tuple[]"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          }
+        ],
+        "name": "getBondAmount",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          }
+        ],
+        "name": "getBondObligor",
+        "outputs": [
+          {
+            "internalType": "address",
+            "name": "",
+            "type": "address"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          }
+        ],
+        "name": "getBondProjectId",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          }
+        ],
+        "name": "getBondStatus",
+        "outputs": [
+          {
+            "internalType": "enum TrustChain.ProjectStatus",
+            "name": "",
+            "type": "uint8"
           }
         ],
         "stateMutability": "view",
@@ -1192,6 +1677,50 @@ export const deployedContracts = {
       {
         "inputs": [
           {
+            "internalType": "uint256",
+            "name": "_bidId",
+            "type": "uint256"
+          }
+        ],
+        "name": "getRiskAssessment",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "riskScore",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "riskCategory",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "recommendation",
+            "type": "string"
+          },
+          {
+            "internalType": "uint256",
+            "name": "timestamp",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "approved",
+            "type": "bool"
+          },
+          {
+            "internalType": "string",
+            "name": "mlModelVersion",
+            "type": "string"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
             "internalType": "address",
             "name": "",
             "type": "address"
@@ -1203,6 +1732,30 @@ export const deployedContracts = {
           }
         ],
         "name": "hasBidded",
+        "outputs": [
+          {
+            "internalType": "bool",
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bondId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "enum TrustChain.ProjectCompletion",
+            "name": "_milestone",
+            "type": "uint8"
+          }
+        ],
+        "name": "isMilestoneApproved",
         "outputs": [
           {
             "internalType": "bool",
@@ -1458,6 +2011,39 @@ export const deployedContracts = {
           }
         ],
         "name": "resolveDispute",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "_bidId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "_riskScore",
+            "type": "uint256"
+          },
+          {
+            "internalType": "string",
+            "name": "_riskCategory",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_recommendation",
+            "type": "string"
+          },
+          {
+            "internalType": "string",
+            "name": "_mlModelVersion",
+            "type": "string"
+          }
+        ],
+        "name": "submitRiskAssessment",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"

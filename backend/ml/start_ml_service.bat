@@ -1,0 +1,9 @@
+@echo off
+echo Starting TrustChain ML Service...
+echo.
+echo Installing dependencies...
+pip install -r requirements.txt
+echo.
+echo Starting ML service on port 5001...
+python ml_service.py
+pause

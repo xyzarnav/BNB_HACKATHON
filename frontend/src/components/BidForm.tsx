@@ -1,19 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCreateBid } from '../hooks/useContractWrite';
+import { useMLContract } from '../hooks/useMLContract';
 import { toast } from 'react-hot-toast';
 import { parseEther } from 'viem';
+import { useAccount } from 'wagmi';
+import RiskAssessment from './MLComponents/RiskAssessment';
 
 interface BidFormProps {
   projectId: number;
   projectType: number;
   budget: bigint;
+  contractAddress: string;
   onBidSubmitted?: () => void;
 }
 
-const BidForm: React.FC<BidFormProps> = ({ projectId, projectType, budget, onBidSubmitted }) => {
+const BidForm: React.FC<BidFormProps> = ({ projectId, projectType, budget, contractAddress, onBidSubmitted }) => {
   const [amount, setAmount] = useState('');
   const [proposal, setProposal] = useState('');
+  const [showRiskAssessment, setShowRiskAssessment] = useState(false);
+  const [currentBidId, setCurrentBidId] = useState<number | null>(null);
+  
   const { createBid, isPending } = useCreateBid();
+  const { address } = useAccount();
+  const { performCompleteAssessment, isSubmittingAssessment, assessmentError } = useMLContract(contractAddress);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,16 +41,28 @@ const BidForm: React.FC<BidFormProps> = ({ projectId, projectType, budget, onBid
         }
       }
 
-      await createBid(
+      const bidResult = await createBid(
         projectId,
         proposal,
         parseEther(amount)
       );
 
-      toast.success('Bid submitted successfully!');
-      setAmount('');
-      setProposal('');
-      onBidSubmitted?.();
+      // Get the bid ID from the transaction result
+      if (bidResult && bidResult.hash) {
+        // For demo purposes, we'll use a timestamp-based ID
+        // In production, you'd parse this from the transaction receipt
+        const bidId = Math.floor(Date.now() / 1000);
+        setCurrentBidId(bidId);
+        
+        // Show risk assessment after successful bid
+        setShowRiskAssessment(true);
+        toast.success('Bid submitted successfully! Now performing AI risk assessment...');
+      } else {
+        toast.success('Bid submitted successfully!');
+        setAmount('');
+        setProposal('');
+        onBidSubmitted?.();
+      }
     } catch (error) {
       console.error('Error submitting bid:', error);
       toast.error('Failed to submit bid. Please try again.');
@@ -105,6 +126,61 @@ const BidForm: React.FC<BidFormProps> = ({ projectId, projectType, budget, onBid
           )}
         </button>
       </form>
+
+      {/* ML Risk Assessment Section */}
+      {showRiskAssessment && currentBidId && (
+        <div className="mt-6 border-t pt-6">
+          <div className="flex items-center justify-between mb-4">
+            <h4 className="text-lg font-semibold text-gray-800">
+              🤖 AI Risk Assessment
+            </h4>
+            <button
+              onClick={() => setShowRiskAssessment(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              ✕
+            </button>
+          </div>
+          
+          <RiskAssessment
+            onAssessmentComplete={async (assessment) => {
+              try {
+                // Submit assessment to blockchain
+                await performCompleteAssessment(
+                  {
+                    bidder_address: address || '',
+                    bid_type: projectType === 0 ? 'MinRate' : projectType === 1 ? 'FixRate' : 'MaxRate',
+                    bid_amount: parseFloat(amount),
+                    project_budget: Number(budget) / 1e18
+                  },
+                  currentBidId
+                );
+                
+                toast.success('Risk assessment completed and stored on blockchain!');
+                setShowRiskAssessment(false);
+                setAmount('');
+                setProposal('');
+                onBidSubmitted?.();
+              } catch (error: any) {
+                toast.error(`Risk assessment failed: ${error.message}`);
+              }
+            }}
+            className="border border-gray-200 rounded-lg"
+          />
+          
+          {assessmentError && (
+            <div className="mt-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md">
+              ❌ {assessmentError}
+            </div>
+          )}
+          
+          {isSubmittingAssessment && (
+            <div className="mt-4 p-3 bg-blue-100 border border-blue-400 text-blue-700 rounded-md">
+              🔄 Submitting risk assessment to blockchain...
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

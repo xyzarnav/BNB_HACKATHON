@@ -315,7 +315,7 @@ export const useMilestoneApproved = (bondId: number, milestone: number) => {
   return useReadContract({
     address: deployedContracts.TrustChain.address as `0x${string}`,
     abi: deployedContracts.TrustChain.abi,
-    functionName: 'bondMilestoneApproved',
+    functionName: 'isMilestoneApproved',
     args: [BigInt(bondId), milestone],
     query: {
       enabled: bondId > 0 && milestone >= 0,
@@ -328,7 +328,7 @@ export const useBondStatus = (bondId: number) => {
   return useReadContract({
     address: deployedContracts.TrustChain.address as `0x${string}`,
     abi: deployedContracts.TrustChain.abi,
-    functionName: 'bondStatus',
+    functionName: 'getBondStatus',
     args: [BigInt(bondId)],
     query: {
       enabled: bondId > 0,
@@ -341,7 +341,7 @@ export const useBondObligor = (bondId: number) => {
   return useReadContract({
     address: deployedContracts.TrustChain.address as `0x${string}`,
     abi: deployedContracts.TrustChain.abi,
-    functionName: 'bondObligor',
+    functionName: 'getBondObligor',
     args: [BigInt(bondId)],
     query: {
       enabled: bondId > 0,
@@ -354,7 +354,7 @@ export const useBondAmount = (bondId: number) => {
   return useReadContract({
     address: deployedContracts.TrustChain.address as `0x${string}`,
     abi: deployedContracts.TrustChain.abi,
-    functionName: 'bondAmount',
+    functionName: 'getBondAmount',
     args: [BigInt(bondId)],
     query: {
       enabled: bondId > 0,

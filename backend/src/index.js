@@ -28,10 +28,12 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/trustchai
 // Import routes
 const projectRoutes = require('./routes/projects');
 const authRoutes = require('./routes/auth');
+const mlRoutes = require('./routes/ml');
 
 // Use routes
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
+app.use('/api/ml', mlRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
@@ -40,7 +42,8 @@ app.get('/', (req, res) => {
     version: '1.0.0',
     endpoints: {
       auth: '/api/auth',
-      projects: '/api/projects'
+      projects: '/api/projects',
+      ml: '/api/ml'
     }
   });
 });
