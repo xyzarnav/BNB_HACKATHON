@@ -76,7 +76,7 @@ const NewNavbar: React.FC = () => {
 
   const navigation = [
     { name: "Dashboard", href: "/dashboard" },
-    { name: "Use Cases", href: "/usecases" },
+    
     { name: "Block Explorer", href: "/blockexplorer" },
     { name: "Profile", href: "/profile" },
     { name: "Contact", href: "/contact" },

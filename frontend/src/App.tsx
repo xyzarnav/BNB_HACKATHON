@@ -138,13 +138,7 @@ function App() {
                     </ProtectedRoute>
                   } />
                   
-                  <Route path="/usecases" element={
-                    <ProtectedRoute>
-                      <Layout>
-                        <UseCasesPage />
-                      </Layout>
-                    </ProtectedRoute>
-                  } />
+                  
                   
                   <Route path="/blockexplorer" element={
                     <ProtectedRoute>
